@@ -1,0 +1,70 @@
+--- origsrc/qtbase-opensource-src-5.1.0/src/widgets/styles/qgtkglobal_p.h	2013-07-02 02:09:50.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/src/widgets/styles/qgtkglobal_p.h	2013-08-14 16:10:23.965460300 -0500
+@@ -58,6 +58,9 @@
+ 
+ #undef signals // Collides with GTK symbols
+ #include <gtk/gtk.h>
++#ifdef Q_OS_CYGWIN
++#undef gtk_init
++#endif
+ 
+ typedef unsigned long XID;
+ 
+--- origsrc/qtbase-opensource-src-5.1.0/src/widgets/styles/qgtkstyle_p.cpp	2013-07-02 02:09:49.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/src/widgets/styles/qgtkstyle_p.cpp	2013-08-14 12:19:53.234387700 -0500
+@@ -349,6 +349,9 @@ void QGtkStylePrivate::resolveGtk() cons
+ {
+     // enforce the "0" suffix, so we'll open libgtk-x11-2.0.so.0
+     QLibrary libgtk(QLS("gtk-x11-2.0"), 0, 0);
++    QLibrary libgdk(QLS("gdk-x11-2.0"), 0, 0);
++    QLibrary libgdkpixbuf(QLS("gdk_pixbuf-2.0"), 0, 0);
++    QLibrary libpango(QLS("pango-1.0"), 0, 0);
+ 
+     gtk_init = (Ptr_gtk_init)libgtk.resolve("gtk_init");
+     gtk_window_new = (Ptr_gtk_window_new)libgtk.resolve("gtk_window_new");
+@@ -371,15 +374,15 @@ void QGtkStylePrivate::resolveGtk() cons
+     gtk_dialog_run = (Ptr_gtk_dialog_run)libgtk.resolve("gtk_dialog_run");
+     gtk_file_chooser_set_filename = (Ptr_gtk_file_chooser_set_filename)libgtk.resolve("gtk_file_chooser_set_filename");
+ 
+-    gdk_pixbuf_get_pixels = (Ptr_gdk_pixbuf_get_pixels)libgtk.resolve("gdk_pixbuf_get_pixels");
+-    gdk_pixbuf_get_width = (Ptr_gdk_pixbuf_get_width)libgtk.resolve("gdk_pixbuf_get_width");
+-    gdk_pixbuf_get_height = (Ptr_gdk_pixbuf_get_height)libgtk.resolve("gdk_pixbuf_get_height");
+-    gdk_pixbuf_new = (Ptr_gdk_pixbuf_new)libgtk.resolve("gdk_pixbuf_new");
+-    gdk_pixbuf_unref = (Ptr_gdk_pixbuf_unref)libgtk.resolve("gdk_pixbuf_unref");
+-    gdk_color_free = (Ptr_gdk_color_free)libgtk.resolve("gdk_color_free");
+-    gdk_x11_window_set_user_time = (Ptr_gdk_x11_window_set_user_time)libgtk.resolve("gdk_x11_window_set_user_time");
+-    gdk_x11_drawable_get_xid = (Ptr_gdk_x11_drawable_get_xid)libgtk.resolve("gdk_x11_drawable_get_xid");
+-    gdk_x11_drawable_get_xdisplay = (Ptr_gdk_x11_drawable_get_xdisplay)libgtk.resolve("gdk_x11_drawable_get_xdisplay");
++    gdk_pixbuf_get_pixels = (Ptr_gdk_pixbuf_get_pixels)libgdkpixbuf.resolve("gdk_pixbuf_get_pixels");
++    gdk_pixbuf_get_width = (Ptr_gdk_pixbuf_get_width)libgdkpixbuf.resolve("gdk_pixbuf_get_width");
++    gdk_pixbuf_get_height = (Ptr_gdk_pixbuf_get_height)libgdkpixbuf.resolve("gdk_pixbuf_get_height");
++    gdk_pixbuf_new = (Ptr_gdk_pixbuf_new)libgdkpixbuf.resolve("gdk_pixbuf_new");
++    gdk_pixbuf_unref = (Ptr_gdk_pixbuf_unref)libgdkpixbuf.resolve("gdk_pixbuf_unref");
++    gdk_color_free = (Ptr_gdk_color_free)libgdk.resolve("gdk_color_free");
++    gdk_x11_window_set_user_time = (Ptr_gdk_x11_window_set_user_time)libgdk.resolve("gdk_x11_window_set_user_time");
++    gdk_x11_drawable_get_xid = (Ptr_gdk_x11_drawable_get_xid)libgdk.resolve("gdk_x11_drawable_get_xid");
++    gdk_x11_drawable_get_xdisplay = (Ptr_gdk_x11_drawable_get_xdisplay)libgdk.resolve("gdk_x11_drawable_get_xdisplay");
+ 
+     gtk_widget_set_default_direction = (Ptr_gtk_widget_set_default_direction)libgtk.resolve("gtk_widget_set_default_direction");
+     gtk_widget_modify_fg = (Ptr_gtk_widget_modify_color)libgtk.resolve("gtk_widget_modify_fg");
+@@ -452,14 +455,14 @@ void QGtkStylePrivate::resolveGtk() cons
+     gtk_widget_set_can_default = (Ptr_gtk_widget_set_can_default)libgtk.resolve("gtk_widget_set_can_default");
+     gtk_window_set_default = (Ptr_gtk_window_set_default)libgtk.resolve("gtk_window_set_default");
+ 
+-    gdk_event_new = (Ptr_gdk_event_new)libgtk.resolve("gdk_event_new");
+-    gdk_event_free = (Ptr_gdk_event_free)libgtk.resolve("gdk_event_free");
++    gdk_event_new = (Ptr_gdk_event_new)libgdk.resolve("gdk_event_new");
++    gdk_event_free = (Ptr_gdk_event_free)libgdk.resolve("gdk_event_free");
+     gtk_widget_send_focus_change = (Ptr_gtk_widget_send_focus_change)libgtk.resolve("gtk_widget_send_focus_change");
+ 
+-    pango_font_description_get_size = (Ptr_pango_font_description_get_size)libgtk.resolve("pango_font_description_get_size");
+-    pango_font_description_get_weight = (Ptr_pango_font_description_get_weight)libgtk.resolve("pango_font_description_get_weight");
+-    pango_font_description_get_family = (Ptr_pango_font_description_get_family)libgtk.resolve("pango_font_description_get_family");
+-    pango_font_description_get_style = (Ptr_pango_font_description_get_style)libgtk.resolve("pango_font_description_get_style");
++    pango_font_description_get_size = (Ptr_pango_font_description_get_size)libpango.resolve("pango_font_description_get_size");
++    pango_font_description_get_weight = (Ptr_pango_font_description_get_weight)libpango.resolve("pango_font_description_get_weight");
++    pango_font_description_get_family = (Ptr_pango_font_description_get_family)libpango.resolve("pango_font_description_get_family");
++    pango_font_description_get_style = (Ptr_pango_font_description_get_style)libpango.resolve("pango_font_description_get_style");
+ 
+     gnome_icon_lookup_sync = (Ptr_gnome_icon_lookup_sync)QLibrary::resolve(QLS("gnomeui-2"), 0, "gnome_icon_lookup_sync");
+     gnome_vfs_init= (Ptr_gnome_vfs_init)QLibrary::resolve(QLS("gnomevfs-2"), 0, "gnome_vfs_init");

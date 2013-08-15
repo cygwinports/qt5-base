@@ -1,0 +1,191 @@
+NAME="qt5-base"
+VERSION=5.1.0
+RELEASE=1
+CATEGORY="Libs"
+SUMMARY="Qt C++ application framework (core libraries)"
+DESCRIPTION="Qt is a cross-platform application framework for desktop and
+embedded development. Qt enables programmers to create advanced GUI
+applications once and deploy them to Windows, Mac OS X and Linux without
+rewriting the source code. Companies using Qt can leverage software
+investments made on one platform across many others."
+HOMEPAGE="http://qt-project.org/"
+SRC_URI="http://download.qt-project.org/official_releases/qt/${VERSION%.*}/${VERSION}/submodules/qtbase-opensource-src-${VERSION}.tar.xz"
+SRC_DIR="qtbase-opensource-src-${VERSION}"
+
+PATCH_URI="
+	5.1.0-cygwin-dlopen.patch
+	5.1.0-cygwin-mkspecs.patch
+	5.1.0-cygwin-qmake.patch
+	5.1.0-cygwin-unix.patch
+	5.1.0-gtkstyle.patch
+	5.1.0-makedepend.patch
+	5.1.0-no-undefined.patch
+"
+
+src_compile() {
+	cd ${B}
+
+	export PATH="${B}/bin:${B}/lib:$PATH"
+
+	# -no-iconv: if -icu is used, iconv is not (see src/corelib/codecs/)
+	# -no-gtkstyle: causes segfaults in QGtk2Painter::paintShadow
+	# -no-largefile: Cygwin's open() and friends are 64-bit w/o O_LARGEFILE
+	${S}/configure \
+		-prefix /usr \
+		-bindir /usr/lib/qt5/bin \
+		-headerdir /usr/include/qt5 \
+		-libdir /usr/lib \
+		-archdatadir /usr/lib/qt5 \
+		-plugindir /usr/lib/qt5/plugins \
+		-importdir /usr/lib/qt5/imports \
+		-qmldir /usr/lib/qt5/qml \
+		-libexecdir /usr/lib/qt5/libexec \
+		-datadir /usr/share/qt5 \
+		-docdir /usr/share/qt5/doc \
+		-sysconfdir /etc/qt5 \
+		-translationdir /usr/share/qt5/translations \
+		-examplesdir /usr/share/qt5/examples \
+		-testsdir /usr/share/qt5/tests \
+		-platform cygwin-g++ \
+		-confirm-license -opensource \
+		-release -c++11 -shared -process \
+		-no-rpath -no-reduce-exports -no-reduce-relocations \
+		-no-largefile \
+		-accessibility \
+		-plugin-sql-mysql \
+		-plugin-sql-odbc \
+		-plugin-sql-psql \
+		-plugin-sql-sqlite -system-sqlite \
+		-plugin-sql-tds \
+		-no-sql-db2 -no-sql-ibase -no-sql-oci -no-sql-sqlite2 \
+		-no-javascript-jit \
+		-system-zlib -system-libpng -system-libjpeg -dbus-linked \
+		-openssl-linked -system-pcre -system-xcb -system-xkbcommon \
+		-gui -widgets -no-cups -icu -no-iconv -pch \
+		-xcb -no-egl -opengl desktop -glib -no-gtkstyle \
+		|| error "configure failed"
+
+	cygmake
+}
+
+src_install() {
+	local x
+
+	cd ${B}
+	cygmake INSTALL_ROOT=${D} install
+
+	# remove package-specific flags from qmake configuration
+	sed -i -e 's| -fdebug-prefix[^ ]*||g' ${D}/usr/lib/qt5/mkspecs/qmodule.pri
+
+	dodir /usr/bin
+
+	# would need to be fixed up even with KEEP_LA_FILES=none
+	mv ${D}/usr/lib/*.dll ${D}/usr/bin/
+	rm -f ${D}/usr/lib/*.la
+
+	# these are provided by both 4.x and 5.x
+	for x in moc qdbuscpp2xml qdbusxml2cpp qdoc qmake rcc uic
+	do
+		dosym ../lib/qt5/bin/${x}.exe /usr/bin/${x}-qt5
+	done
+
+	dosym ../../include/qt5 /usr/lib/qt5/include
+
+	dodoc ${S}/LGPL_EXCEPTION.txt ${S}/LICENSE.{FDL,*GPL}
+}
+
+PKG_NAMES="libQt5Core5 libQt5Core-devel libQt5Sql5 libQt5Sql-devel
+           libQt5Gui5 libQt5Gui-devel ${NAME}-examples"
+libQt5Core5_CONTENTS="
+	usr/bin/cygQt5Concurrent-5.dll
+	usr/bin/cygQt5Core-5.dll
+	usr/bin/cygQt5DBus-5.dll
+	usr/bin/cygQt5Network-5.dll
+	usr/bin/cygQt5Test-5.dll
+	usr/bin/cygQt5Xml-5.dll
+	usr/lib/qt5/plugins/bearer/
+	usr/share/doc/${NAME}/
+"
+libQt5Core_devel_CONTENTS="
+ 	usr/bin/*-qt5
+	usr/include/qt5/QtConcurrent/
+	usr/include/qt5/QtCore/
+	usr/include/qt5/QtDBus/
+	usr/include/qt5/QtNetwork/
+	usr/include/qt5/QtTest/
+	usr/include/qt5/QtXml/
+	usr/lib/cmake/Qt5/
+	usr/lib/cmake/Qt5Concurrent/
+	usr/lib/cmake/Qt5Core/
+	usr/lib/cmake/Qt5DBus/
+	usr/lib/cmake/Qt5Network/
+	usr/lib/cmake/Qt5Test/
+	usr/lib/cmake/Qt5Xml/
+	usr/lib/libQt5Bootstrap.*
+	usr/lib/libQt5Concurrent.*
+	usr/lib/libQt5Core.*
+	usr/lib/libQt5DBus.*
+	usr/lib/libQt5Network.*
+	usr/lib/libQt5Test.*
+	usr/lib/libQt5Xml.*
+	usr/lib/pkgconfig/Qt5Bootstrap.pc
+	usr/lib/pkgconfig/Qt5Concurrent.pc
+	usr/lib/pkgconfig/Qt5Core.pc
+	usr/lib/pkgconfig/Qt5DBus.pc
+	usr/lib/pkgconfig/Qt5Network.pc
+	usr/lib/pkgconfig/Qt5Test.pc
+	usr/lib/pkgconfig/Qt5Xml.pc
+	usr/lib/qt5/bin/
+	usr/lib/qt5/include
+	usr/lib/qt5/mkspecs/
+	usr/share/qt5/doc/
+"
+libQt5Gui5_CONTENTS="
+	usr/bin/cygQt5Gui-5.dll
+	usr/bin/cygQt5OpenGL-5.dll
+	usr/bin/cygQt5PrintSupport-5.dll
+	usr/bin/cygQt5Widgets-5.dll
+	usr/lib/qt5/plugins/accessible/
+	usr/lib/qt5/plugins/imageformats/
+	usr/lib/qt5/plugins/platforminputcontexts/
+	usr/lib/qt5/plugins/platforms/
+"
+libQt5Gui_devel_CONTENTS="
+	usr/include/qt5/QtGui/
+	usr/include/qt5/QtOpenGL/
+	usr/include/qt5/QtOpenGLExtensions/
+	usr/include/qt5/QtPlatformSupport/
+	usr/include/qt5/QtPrintSupport/
+	usr/include/qt5/QtWidgets/
+	usr/lib/cmake/Qt5Gui/
+	usr/lib/cmake/Qt5OpenGL/
+	usr/lib/cmake/Qt5OpenGLExtensions/
+	usr/lib/cmake/Qt5PrintSupport/
+	usr/lib/cmake/Qt5Widgets/
+	usr/lib/libQt5Gui.*
+	usr/lib/libQt5OpenGL.*
+	usr/lib/libQt5OpenGLExtensions.*
+	usr/lib/libQt5PlatformSupport.*
+	usr/lib/libQt5PrintSupport.*
+	usr/lib/libQt5Widgets.*
+	usr/lib/pkgconfig/Qt5Gui.pc
+	usr/lib/pkgconfig/Qt5OpenGL.pc
+	usr/lib/pkgconfig/Qt5OpenGLExtensions.pc
+	usr/lib/pkgconfig/Qt5PlatformSupport.pc
+	usr/lib/pkgconfig/Qt5PrintSupport.pc
+	usr/lib/pkgconfig/Qt5Widgets.pc
+"
+libQt5Sql5_CONTENTS="
+	usr/bin/cygQt5Sql-5.dll
+	usr/lib/qt5/plugins/sqldrivers/
+"
+libQt5Sql_devel_CONTENTS="
+	usr/include/qt5/QtSql/
+	usr/lib/cmake/Qt5Sql/
+	usr/lib/libQt5Sql.*
+	usr/lib/pkgconfig/Qt5Sql.pc
+"
+
+qt5_base_examples_CONTENTS="usr/share/qt5/examples/"
+
+DIFF_EXCLUDES="3rdparty"

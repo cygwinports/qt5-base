@@ -1,0 +1,116 @@
+--- origsrc/qtbase-opensource-src-5.1.0/mkspecs/cygwin-g++/qmake.conf	2013-07-02 02:09:32.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/mkspecs/cygwin-g++/qmake.conf	2013-08-14 15:42:47.180697600 -0500
+@@ -14,8 +14,11 @@ QMAKE_COMPILER          = gcc
+ QMAKE_CC                = gcc
+ QMAKE_LEX               = flex
+ QMAKE_LEXFLAGS          =
+-QMAKE_YACC              = byacc
++QMAKE_YACC              = yacc
+ QMAKE_YACCFLAGS         = -d
++QMAKE_YACCFLAGS_MANGLE  = -p $base -b $base
++QMAKE_YACC_HEADER       = $base.tab.h
++QMAKE_YACC_SOURCE       = $base.tab.c
+ QMAKE_CFLAGS            = -pipe
+ QMAKE_CFLAGS_DEPS       = -M
+ QMAKE_CFLAGS_WARN_ON    = -Wall -W
+@@ -25,9 +28,13 @@ QMAKE_CFLAGS_DEBUG      = -g
+ QMAKE_CFLAGS_SHLIB      =
+ QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
+ QMAKE_CFLAGS_THREAD     = -D_REENTRANT
++QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO = -O2 -g
++QMAKE_CFLAGS_PRECOMPILE       = -x c-header -c ${QMAKE_PCH_INPUT} -o ${QMAKE_PCH_OUTPUT}
++QMAKE_CFLAGS_USE_PRECOMPILE   = -include ${QMAKE_PCH_OUTPUT_BASE}
+ 
+ QMAKE_CXX               = g++
+ QMAKE_CXXFLAGS          = $$QMAKE_CFLAGS
++QMAKE_CXXFLAGS_CXX11    = -std=gnu++11
+ QMAKE_CXXFLAGS_DEPS     = $$QMAKE_CFLAGS_DEPS
+ QMAKE_CXXFLAGS_WARN_ON  = $$QMAKE_CFLAGS_WARN_ON
+ QMAKE_CXXFLAGS_WARN_OFF = $$QMAKE_CFLAGS_WARN_OFF
+@@ -36,13 +43,16 @@ QMAKE_CXXFLAGS_DEBUG    = $$QMAKE_CFLAGS
+ QMAKE_CXXFLAGS_SHLIB    = $$QMAKE_CFLAGS_SHLIB
+ QMAKE_CXXFLAGS_YACC     = $$QMAKE_CFLAGS_YACC
+ QMAKE_CXXFLAGS_THREAD   = $$QMAKE_CFLAGS_THREAD
++QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO = $$QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO
++QMAKE_CXXFLAGS_PRECOMPILE     = -x c++-header -c ${QMAKE_PCH_INPUT} -o ${QMAKE_PCH_OUTPUT}
++QMAKE_CXXFLAGS_USE_PRECOMPILE = $$QMAKE_CFLAGS_USE_PRECOMPILE
+ 
+ QMAKE_INCDIR            =
+ QMAKE_LIBDIR            =
+-QMAKE_INCDIR_X11        = /usr/X11R6/include
+-QMAKE_LIBDIR_X11        = /usr/X11R6/lib
+-QMAKE_INCDIR_OPENGL     = /usr/X11R6/include
+-QMAKE_LIBDIR_OPENGL     = /usr/X11R6/lib
++QMAKE_INCDIR_X11        =
++QMAKE_LIBDIR_X11        =
++QMAKE_INCDIR_OPENGL     =
++QMAKE_LIBDIR_OPENGL     =
+ 
+ QMAKE_LINK              = g++
+ QMAKE_LINK_SHLIB        = g++
+@@ -53,9 +63,10 @@ QMAKE_LFLAGS_RELEASE    =
+ QMAKE_LFLAGS_DEBUG      =
+ QMAKE_LFLAGS_SHLIB      = -shared
+ QMAKE_LFLAGS_PLUGIN     = $$QMAKE_LFLAGS_SHLIB
+-QMAKE_LFLAGS_SONAME     = -Wl,-soname,
++QMAKE_LFLAGS_SONAME     =
+ QMAKE_LFLAGS_THREAD     =
+-QMAKE_LFLAGS_RPATH      = -Wl,-rpath,
++QMAKE_LFLAGS_RPATH      =
++QMAKE_LFLAGS_CXX11      =
+ QMAKE_CYGWIN_SHLIB      = 1
+ QMAKE_CYGWIN_EXE        = 1
+ 
+@@ -64,9 +75,10 @@ QMAKE_LIBS_DYNLOAD      = -ldl
+ QMAKE_LIBS_X11          = -lXext -lX11
+ QMAKE_LIBS_OPENGL       = -lGL
+ QMAKE_LIBS_THREAD       = -lpthread
+-QMAKE_PREFIX_SHLIB      = lib
++QMAKE_PREFIX_SHLIB      = cyg
+ QMAKE_PREFIX_STATICLIB  = lib
+ QMAKE_EXTENSION_STATICLIB = a
++QMAKE_PCH_OUTPUT_EXT    = .gch
+ 
+ QMAKE_AR                = ar cqs
+ QMAKE_OBJCOPY           = objcopy
+--- origsrc/qtbase-opensource-src-5.1.0/mkspecs/cygwin-g++/qplatformdefs.h	2013-07-02 02:09:32.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/mkspecs/cygwin-g++/qplatformdefs.h	2013-08-14 12:07:13.381926700 -0500
+@@ -71,14 +71,12 @@
+ 
+ #include <sys/types.h>
+ #include <sys/ioctl.h>
+-// Cygwin does not provide <sys/ipc.h> and <sys/shm.h> because it
+-// doesn't support SysV IPC or shared memory. See for example:
+-// 	http://afni.nimh.nih.gov/afni/afniboard/messages/1725.html
++#include <sys/ipc.h>
++#include <sys/shm.h>
+ #include <sys/time.h>
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/wait.h>
+-//#include <windows.h>
+ #include <netinet/in.h>
+ 
+ #define QT_NO_USE_FSEEKO
+--- origsrc/qtbase-opensource-src-5.1.0/mkspecs/features/qt_functions.prf	2013-07-02 02:09:32.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/mkspecs/features/qt_functions.prf	2013-08-14 16:05:07.780375500 -0500
+@@ -254,7 +254,7 @@ defineTest(qtAddTargetEnv) {
+             else: \
+                 deppath += $$system_path($$eval(QT.$${dep}.libs))
+         }
+-        equals(QMAKE_HOST.os, Windows) {
++        contains(QMAKE_HOST.os, Windows|CYGWIN.*) {
+             deppath.name = PATH
+         } else:contains(QMAKE_HOST.os, Linux|FreeBSD) {
+             deppath.name = LD_LIBRARY_PATH
+--- origsrc/qtbase-opensource-src-5.1.0/src/tools/bootstrap/bootstrap.pro	2013-07-02 02:10:00.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/src/tools/bootstrap/bootstrap.pro	2013-08-14 14:02:35.627856500 -0500
+@@ -5,7 +5,7 @@ QT =
+ CONFIG += internal_module force_bootstrap
+ 
+ # otherwise mingw headers do not declare common functions like putenv
+-win32-g++*:QMAKE_CXXFLAGS_CXX11 = -std=gnu++0x
++cygwin-g++|win32-g++*:QMAKE_CXXFLAGS_CXX11 = -std=gnu++0x
+ 
+ MODULE_DEFINES = \
+         QT_BOOTSTRAPPED \

@@ -1,0 +1,11 @@
+--- origsrc/qtbase-opensource-src-5.1.0/configure	2013-07-02 02:09:32.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/configure	2013-08-14 12:15:03.897838600 -0500
+@@ -4050,7 +4050,7 @@ if true; then ###[ '!' -f "$outpath/bin/
+         fi
+         cat "$in_mkfile" >> "$mkfile"
+ 
+-        if "$WHICH" makedepend >/dev/null 2>&1 && grep 'depend:' "$mkfile" >/dev/null 2>&1; then
++        if false && "$WHICH" makedepend >/dev/null 2>&1 && grep 'depend:' "$mkfile" >/dev/null 2>&1; then
+             (cd "$outpath/qmake" && "$MAKE" -f "$mkfile" depend) >/dev/null 2>&1
+ 	    sed "s,^.*/\([^/]*.o\):,\1:,g" "$mkfile" >"$mkfile.tmp"
+ 	    sed "s,$outpath,$adjoutpath,g" "$mkfile.tmp" >"$mkfile"

@@ -1,0 +1,49 @@
+--- origsrc/qtbase-opensource-src-5.1.0/src/corelib/io/qprocess_unix.cpp	2013-07-02 02:10:02.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/src/corelib/io/qprocess_unix.cpp	2013-08-14 12:23:59.425469100 -0500
+@@ -510,6 +510,8 @@ static char **_q_dupEnvironment(const QP
+     // copy it over.
+ #if defined(Q_OS_MAC)
+     static const char libraryPath[] = "DYLD_LIBRARY_PATH";
++#elif defined(Q_OS_CYGWIN)
++    static const char libraryPath[] = "PATH";
+ #else
+     static const char libraryPath[] = "LD_LIBRARY_PATH";
+ #endif
+--- origsrc/qtbase-opensource-src-5.1.0/src/corelib/plugin/qlibrary.cpp	2013-07-02 02:10:01.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/src/corelib/plugin/qlibrary.cpp	2013-08-14 12:21:34.373172500 -0500
+@@ -559,7 +559,7 @@ bool QLibraryPrivate::loadPlugin()
+  */
+ bool QLibrary::isLibrary(const QString &fileName)
+ {
+-#if defined(Q_OS_WIN32) || defined(Q_OS_WINCE)
++#if defined(Q_OS_WIN32) || defined(Q_OS_WINCE) || defined(Q_OS_CYGWIN)
+     return fileName.endsWith(QLatin1String(".dll"), Qt::CaseInsensitive);
+ #else
+     QString completeSuffix = QFileInfo(fileName).completeSuffix();
+--- origsrc/qtbase-opensource-src-5.1.0/src/corelib/plugin/qlibrary_unix.cpp	2013-07-02 02:10:01.000000000 -0500
++++ src/qtbase-opensource-src-5.1.0/src/corelib/plugin/qlibrary_unix.cpp	2013-08-14 12:23:28.872721500 -0500
+@@ -110,6 +110,12 @@ QStringList QLibraryPrivate::suffixes_sy
+     }
+ #elif defined(Q_OS_AIX)
+     suffixes << ".a";
++#elif defined(Q_OS_CYGWIN)
++    if (!fullVersion.isEmpty()) {
++        suffixes << QString::fromLatin1("-%1.dll").arg(fullVersion);
++    } else {
++        suffixes << QLatin1String(".dll");
++    }
+ 
+ #else
+     if (!fullVersion.isEmpty()) {
+@@ -131,7 +137,11 @@ QStringList QLibraryPrivate::suffixes_sy
+ 
+ QStringList QLibraryPrivate::prefixes_sys()
+ {
++#ifdef Q_OS_CYGWIN
++    return QStringList() << QLatin1String("cyg");
++#else
+     return QStringList() << QLatin1String("lib");
++#endif
+ }
+ 
+ bool QLibraryPrivate::load_sys()
