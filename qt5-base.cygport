@@ -44,8 +44,8 @@ src_compile() {
 		-docdir /usr/share/qt5/doc \
 		-sysconfdir /etc/qt5 \
 		-translationdir /usr/share/qt5/translations \
-		-examplesdir /usr/share/qt5/examples \
-		-testsdir /usr/share/qt5/tests \
+		-examplesdir /usr/lib/qt5/examples \
+		-testsdir /usr/lib/qt5/tests \
 		-platform cygwin-g++ \
 		-confirm-license -opensource \
 		-release -c++11 -shared -process \
@@ -186,6 +186,6 @@ libQt5Sql_devel_CONTENTS="
 	usr/lib/pkgconfig/Qt5Sql.pc
 "
 
-qt5_base_examples_CONTENTS="usr/share/qt5/examples/"
+qt5_base_examples_CONTENTS="usr/lib/qt5/examples/"
 
 DIFF_EXCLUDES="3rdparty"
