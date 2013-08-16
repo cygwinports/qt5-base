@@ -106,6 +106,7 @@ libQt5Core5_CONTENTS="
 	usr/lib/qt5/plugins/bearer/
 	usr/share/doc/${NAME}/
 "
+libQt5Core_devel_REQUIRES="qt5-linguist-tools"
 libQt5Core_devel_CONTENTS="
  	usr/bin/*-qt5
 	usr/include/qt5/QtConcurrent/
