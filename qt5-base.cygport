@@ -66,13 +66,14 @@ src_compile() {
 		|| error "configure failed"
 
 	cygmake
+	cygmake docs
 }
 
 src_install() {
 	local x
 
 	cd ${B}
-	cygmake INSTALL_ROOT=${D} install
+	cygmake INSTALL_ROOT=${D} install install_docs
 
 	# remove package-specific flags from qmake configuration
 	sed -i -e 's| -fdebug-prefix[^ ]*||g' ${D}/usr/lib/qt5/mkspecs/qmodule.pri
@@ -95,7 +96,7 @@ src_install() {
 }
 
 PKG_NAMES="libQt5Core5 libQt5Core-devel libQt5Sql5 libQt5Sql-devel
-           libQt5Gui5 libQt5Gui-devel ${NAME}-examples"
+           libQt5Gui5 libQt5Gui-devel ${NAME}-doc ${NAME}-examples"
 libQt5Core5_CONTENTS="
 	usr/bin/cygQt5Concurrent-5.dll
 	usr/bin/cygQt5Core-5.dll
@@ -139,7 +140,7 @@ libQt5Core_devel_CONTENTS="
 	usr/lib/qt5/bin/
 	usr/lib/qt5/include
 	usr/lib/qt5/mkspecs/
-	usr/share/qt5/doc/
+	usr/share/qt5/doc/global/
 "
 libQt5Gui5_CONTENTS="
 	usr/bin/cygQt5Gui-5.dll
@@ -186,7 +187,9 @@ libQt5Sql_devel_CONTENTS="
 	usr/lib/libQt5Sql.*
 	usr/lib/pkgconfig/Qt5Sql.pc
 "
-
+qt5_base_doc_CATEGORY="Doc"
+qt5_base_doc_CONTENTS="usr/share/qt5/doc/q*"
+qt5_base_examples_CATEGORY="X11"
 qt5_base_examples_CONTENTS="usr/lib/qt5/examples/"
 
 DIFF_EXCLUDES="3rdparty"
