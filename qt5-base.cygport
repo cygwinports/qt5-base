@@ -1,5 +1,5 @@
 NAME="qt5-base"
-VERSION=5.1.0
+VERSION=5.2.1
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
@@ -20,7 +20,13 @@ PATCH_URI="
 	5.1.0-gtkstyle.patch
 	5.1.0-makedepend.patch
 	5.1.0-no-undefined.patch
+	5.2.0-cygwin-iconv.patch
+	5.2.1-cygwin-resolv.patch
+	5.2.1-cygwin-cmake.patch
 "
+
+CFLAGS+=" -DFD_SETSIZE=1024"
+CXXFLAGS+=" -DFD_SETSIZE=1024"
 
 src_compile() {
 	cd ${B}
@@ -48,7 +54,7 @@ src_compile() {
 		-testsdir /usr/lib/qt5/tests \
 		-platform cygwin-g++ \
 		-confirm-license -opensource \
-		-release -c++11 -shared -process \
+		-release -c++11 -shared -process -optimized-qmake \
 		-no-rpath -no-reduce-exports -no-reduce-relocations \
 		-no-largefile \
 		-accessibility \
@@ -60,9 +66,10 @@ src_compile() {
 		-no-sql-db2 -no-sql-ibase -no-sql-oci -no-sql-sqlite2 \
 		-no-javascript-jit \
 		-system-zlib -system-libpng -system-libjpeg -dbus-linked \
-		-openssl-linked -system-pcre -system-xcb -system-xkbcommon \
-		-gui -widgets -no-cups -icu -no-iconv -pch \
-		-xcb -no-egl -opengl desktop -glib -no-gtkstyle \
+		-openssl-linked -system-pcre -system-harfbuzz \
+		 -system-xcb -system-xkbcommon \
+		-gui -widgets -no-cups -icu -iconv -pch \
+		-xcb -no-egl -opengl desktop -glib -gtkstyle \
 		|| error "configure failed"
 
 	cygmake
@@ -74,9 +81,6 @@ src_install() {
 
 	cd ${B}
 	cygmake INSTALL_ROOT=${D} install install_docs
-
-	# remove package-specific flags from qmake configuration
-	sed -i -e 's| -fdebug-prefix[^ ]*||g' ${D}/usr/lib/qt5/mkspecs/qmodule.pri
 
 	dodir /usr/bin
 
@@ -92,11 +96,25 @@ src_install() {
 
 	dosym ../../include/qt5 /usr/lib/qt5/include
 
-	dodoc ${S}/LGPL_EXCEPTION.txt ${S}/LICENSE.{FDL,*GPL}
+	pushd ${D}/usr/lib/qt5/mkspecs
+	# remove all mkspecs not required for this host or host_build
+	for d in *
+	do
+		case $d in
+		common|features|modules|cygwin-g*|*.pri) ;;
+		*)      rmdirs+=" $d" ;;
+		esac
+	done
+	rm -fr ${rmdirs}
+	ln -s cygwin-g++ default
+	# remove package-specific flags from qmake configuration
+	sed -i -e 's| -fdebug-prefix[^ ]*||g' qmodule.pri
+	popd
 }
 
 PKG_NAMES="libQt5Core5 libQt5Core-devel libQt5Sql5 libQt5Sql-devel
            libQt5Gui5 libQt5Gui-devel ${NAME}-doc ${NAME}-examples"
+libQt5Core5_REQUIRES="ca-certificates"
 libQt5Core5_CONTENTS="
 	usr/bin/cygQt5Concurrent-5.dll
 	usr/bin/cygQt5Core-5.dll
@@ -151,6 +169,7 @@ libQt5Gui5_CONTENTS="
 	usr/lib/qt5/plugins/imageformats/
 	usr/lib/qt5/plugins/platforminputcontexts/
 	usr/lib/qt5/plugins/platforms/
+	usr/lib/qt5/plugins/platformthemes/
 "
 libQt5Gui_devel_CONTENTS="
 	usr/include/qt5/QtGui/

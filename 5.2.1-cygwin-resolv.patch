@@ -1,0 +1,22 @@
+--- origsrc/qtbase-opensource-src-5.2.1/src/network/kernel/qdnslookup_unix.cpp	2014-02-01 14:37:30.000000000 -0600
++++ src/qtbase-opensource-src-5.2.1/src/network/kernel/qdnslookup_unix.cpp	2014-04-13 22:13:22.103215600 -0500
+@@ -54,6 +54,8 @@
+ 
+ #ifdef __GNU_LIBRARY__
+ #  include <gnu/lib-names.h>
++#elif defined(Q_OS_CYGWIN)
++#  define LIBRESOLV_SO "cygwin1.dll"
+ #endif
+ 
+ QT_BEGIN_NAMESPACE
+--- origsrc/qtbase-opensource-src-5.2.1/src/network/kernel/qhostinfo_unix.cpp	2014-02-01 14:37:30.000000000 -0600
++++ src/qtbase-opensource-src-5.2.1/src/network/kernel/qhostinfo_unix.cpp	2014-04-13 22:14:00.360403800 -0500
+@@ -65,6 +65,8 @@
+ 
+ #ifdef __GNU_LIBRARY__
+ #  include <gnu/lib-names.h>
++#elif defined(Q_OS_CYGWIN)
++#  define LIBRESOLV_SO "cygwin1.dll"
+ #endif
+ 
+ #if defined (QT_NO_GETADDRINFO)

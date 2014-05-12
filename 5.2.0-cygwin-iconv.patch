@@ -1,0 +1,10 @@
+The gnu-libiconv test is solely for platforms where the inbuf parameter to
+iconv(3) is const char **; we have GNU libiconv but use the POSIX char **.
+
+--- origsrc/qtbase-opensource-src-5.2.0/config.tests/unix/iconv/iconv.pro	2014-02-01 14:37:37.000000000 -0600
++++ src/qtbase-opensource-src-5.2.0/config.tests/unix/iconv/iconv.pro	2014-02-09 05:55:49.187923700 -0600
+@@ -1,3 +1,3 @@
+ SOURCES = iconv.cpp
+ CONFIG -= qt dylib
+-mac|win32-g++*|qnx:LIBS += -liconv
++mac|cygwin-g++*|win32-g++*|qnx:LIBS += -liconv
