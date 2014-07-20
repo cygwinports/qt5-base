@@ -23,6 +23,7 @@ PATCH_URI="
 	5.2.0-cygwin-iconv.patch
 	5.2.1-cygwin-resolv.patch
 	5.2.1-cygwin-cmake.patch
+	5.2.1-cygwin-opengl.patch
 "
 
 CFLAGS+=" -DFD_SETSIZE=1024"
@@ -67,7 +68,7 @@ src_compile() {
 		-no-javascript-jit \
 		-system-zlib -system-libpng -system-libjpeg -dbus-linked \
 		-openssl-linked -system-pcre -system-harfbuzz \
-		 -system-xcb -system-xkbcommon \
+		-system-xcb -system-xkbcommon \
 		-gui -widgets -no-cups -icu -iconv -pch \
 		-xcb -no-egl -opengl desktop -glib -gtkstyle \
 		|| error "configure failed"
