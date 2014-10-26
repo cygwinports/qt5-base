@@ -1,5 +1,5 @@
---- origsrc/qtbase-opensource-src-5.1.0/src/widgets/styles/qgtkglobal_p.h	2013-07-02 02:09:50.000000000 -0500
-+++ src/qtbase-opensource-src-5.1.0/src/widgets/styles/qgtkglobal_p.h	2013-08-14 16:10:23.965460300 -0500
+--- origsrc/qtbase-opensource-src-5.3.2/src/widgets/styles/qgtkglobal_p.h	2014-09-11 05:48:01.000000000 -0500
++++ src/qtbase-opensource-src-5.3.2/src/widgets/styles/qgtkglobal_p.h	2014-10-24 12:03:52.152571800 -0500
 @@ -58,6 +58,9 @@
  
  #undef signals // Collides with GTK symbols
@@ -10,9 +10,9 @@
  
  typedef unsigned long XID;
  
---- origsrc/qtbase-opensource-src-5.1.0/src/widgets/styles/qgtkstyle_p.cpp	2013-07-02 02:09:49.000000000 -0500
-+++ src/qtbase-opensource-src-5.1.0/src/widgets/styles/qgtkstyle_p.cpp	2013-08-14 12:19:53.234387700 -0500
-@@ -349,6 +349,9 @@ void QGtkStylePrivate::resolveGtk() cons
+--- origsrc/qtbase-opensource-src-5.3.2/src/widgets/styles/qgtkstyle_p.cpp	2014-09-11 05:48:01.000000000 -0500
++++ src/qtbase-opensource-src-5.3.2/src/widgets/styles/qgtkstyle_p.cpp	2014-10-24 12:03:52.163573200 -0500
+@@ -335,6 +335,9 @@ void QGtkStylePrivate::resolveGtk() cons
  {
      // enforce the "0" suffix, so we'll open libgtk-x11-2.0.so.0
      QLibrary libgtk(QLS("gtk-x11-2.0"), 0, 0);
@@ -22,9 +22,9 @@
  
      gtk_init = (Ptr_gtk_init)libgtk.resolve("gtk_init");
      gtk_window_new = (Ptr_gtk_window_new)libgtk.resolve("gtk_window_new");
-@@ -371,15 +374,15 @@ void QGtkStylePrivate::resolveGtk() cons
-     gtk_dialog_run = (Ptr_gtk_dialog_run)libgtk.resolve("gtk_dialog_run");
-     gtk_file_chooser_set_filename = (Ptr_gtk_file_chooser_set_filename)libgtk.resolve("gtk_file_chooser_set_filename");
+@@ -342,15 +345,15 @@ void QGtkStylePrivate::resolveGtk() cons
+     gtk_widget_destroy = (Ptr_gtk_widget_destroy)libgtk.resolve("gtk_widget_destroy");
+     gtk_widget_realize = (Ptr_gtk_widget_realize)libgtk.resolve("gtk_widget_realize");
  
 -    gdk_pixbuf_get_pixels = (Ptr_gdk_pixbuf_get_pixels)libgtk.resolve("gdk_pixbuf_get_pixels");
 -    gdk_pixbuf_get_width = (Ptr_gdk_pixbuf_get_width)libgtk.resolve("gdk_pixbuf_get_width");
@@ -47,7 +47,7 @@
  
      gtk_widget_set_default_direction = (Ptr_gtk_widget_set_default_direction)libgtk.resolve("gtk_widget_set_default_direction");
      gtk_widget_modify_fg = (Ptr_gtk_widget_modify_color)libgtk.resolve("gtk_widget_modify_fg");
-@@ -452,14 +455,14 @@ void QGtkStylePrivate::resolveGtk() cons
+@@ -423,14 +426,14 @@ void QGtkStylePrivate::resolveGtk() cons
      gtk_widget_set_can_default = (Ptr_gtk_widget_set_can_default)libgtk.resolve("gtk_widget_set_can_default");
      gtk_window_set_default = (Ptr_gtk_window_set_default)libgtk.resolve("gtk_window_set_default");
  

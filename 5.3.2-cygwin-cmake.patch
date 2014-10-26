@@ -1,5 +1,5 @@
---- origsrc/qtbase-opensource-src-5.2.1/mkspecs/features/create_cmake.prf	2014-02-01 14:37:37.000000000 -0600
-+++ src/qtbase-opensource-src-5.2.1/mkspecs/features/create_cmake.prf	2014-05-02 04:40:09.208910700 -0500
+--- origsrc/qtbase-opensource-src-5.3.2/mkspecs/features/create_cmake.prf	2014-09-11 05:48:07.000000000 -0500
++++ src/qtbase-opensource-src-5.3.2/mkspecs/features/create_cmake.prf	2014-10-24 12:25:45.771380200 -0500
 @@ -82,6 +82,12 @@ win32:!wince:!static:!staticlib {
          CMAKE_DLL_DIR = $$[QT_INSTALL_BINS]/
          CMAKE_DLL_DIR_IS_ABSOLUTE = True
@@ -13,7 +13,7 @@
  } else {
      CMAKE_DLL_DIR = $$CMAKE_LIB_DIR
      CMAKE_DLL_DIR_IS_ABSOLUTE = $$CMAKE_LIB_DIR_IS_ABSOLUTE
-@@ -131,6 +137,17 @@ contains(CONFIG, plugin) {
+@@ -138,6 +144,17 @@ contains(CONFIG, plugin) {
  
          CMAKE_PLUGIN_LOCATION_RELEASE = $$PLUGIN_TYPE/$${TARGET}$${CMAKE_PlUGIN_EXT}
          CMAKE_PLUGIN_LOCATION_DEBUG = $$PLUGIN_TYPE/$${TARGET}d$${CMAKE_PlUGIN_EXT}
@@ -31,17 +31,28 @@
      } else {
          mac {
              isEmpty(CMAKE_STATIC_TYPE): CMAKE_PlUGIN_EXT = .dylib
-@@ -232,6 +249,13 @@ mac {
-         CMAKE_LIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
-         CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}.prl
-         CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.prl
-+    } else:cygwin-* {
-+        CMAKE_WINDOWS_BUILD = "true"
+@@ -231,6 +248,24 @@ mac {
+             CMAKE_IMPLIB_FILE_LOCATION_RELEASE = $${CMAKE_QT_STEM}.lib
+         }
+     }
++} else:cygwin-* {
++    CMAKE_WINDOWS_BUILD = "true"
++    !isEmpty(CMAKE_STATIC_TYPE) {
++        CMAKE_LIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}.a
++        CMAKE_LIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
++        CMAKE_PRL_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}.prl
++        CMAKE_PRL_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.prl
++    } else:unversioned_libname {
++        CMAKE_LIB_SONAME = cyg$${CMAKE_QT_STEM}.dll
++        CMAKE_LIB_FILE_LOCATION_DEBUG = $${CMAKE_LIB_SONAME}
++        CMAKE_LIB_FILE_LOCATION_RELEASE = $${CMAKE_LIB_SONAME}
++    } else {
 +        CMAKE_LIB_SONAME = cyg$${CMAKE_QT_STEM}-$$eval(QT.$${MODULE}.MAJOR_VERSION).dll
 +        CMAKE_LIB_FILE_LOCATION_DEBUG = $${CMAKE_LIB_SONAME}
 +        CMAKE_LIB_FILE_LOCATION_RELEASE = $${CMAKE_LIB_SONAME}
 +        CMAKE_IMPLIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}.dll.a
 +        CMAKE_IMPLIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.dll.a
-     } else {
-         CMAKE_LIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}.so.$$eval(QT.$${MODULE}.VERSION)
-         CMAKE_LIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.so.$$eval(QT.$${MODULE}.VERSION)
++    }
+ } else {
+     !isEmpty(CMAKE_STATIC_TYPE) {
+         CMAKE_LIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}.a

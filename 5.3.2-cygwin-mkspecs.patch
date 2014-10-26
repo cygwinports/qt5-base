@@ -1,5 +1,5 @@
---- origsrc/qtbase-opensource-src-5.1.0/mkspecs/cygwin-g++/qmake.conf	2013-07-02 02:09:32.000000000 -0500
-+++ src/qtbase-opensource-src-5.1.0/mkspecs/cygwin-g++/qmake.conf	2013-08-14 15:42:47.180697600 -0500
+--- origsrc/qtbase-opensource-src-5.3.2/mkspecs/cygwin-g++/qmake.conf	2014-09-11 05:48:07.000000000 -0500
++++ src/qtbase-opensource-src-5.3.2/mkspecs/cygwin-g++/qmake.conf	2014-10-24 12:02:24.415930700 -0500
 @@ -14,8 +14,11 @@ QMAKE_COMPILER          = gcc
  QMAKE_CC                = gcc
  QMAKE_LEX               = flex
@@ -13,13 +13,24 @@
  QMAKE_CFLAGS            = -pipe
  QMAKE_CFLAGS_DEPS       = -M
  QMAKE_CFLAGS_WARN_ON    = -Wall -W
-@@ -25,9 +28,13 @@ QMAKE_CFLAGS_DEBUG      = -g
+@@ -25,9 +28,24 @@ QMAKE_CFLAGS_DEBUG      = -g
  QMAKE_CFLAGS_SHLIB      =
  QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
  QMAKE_CFLAGS_THREAD     = -D_REENTRANT
 +QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO = -O2 -g
 +QMAKE_CFLAGS_PRECOMPILE       = -x c-header -c ${QMAKE_PCH_INPUT} -o ${QMAKE_PCH_OUTPUT}
 +QMAKE_CFLAGS_USE_PRECOMPILE   = -include ${QMAKE_PCH_OUTPUT_BASE}
++QMAKE_CFLAGS_EXCEPTIONS_OFF = -fno-exceptions
++QMAKE_CFLAGS_SPLIT_SECTIONS = -ffunction-sections
++QMAKE_CFLAGS_SSE2       = -msse2 -mstackrealign
++QMAKE_CFLAGS_SSE3       = -msse3
++QMAKE_CFLAGS_SSSE3      = -mssse3
++QMAKE_CFLAGS_SSE4_1     = -msse4.1
++QMAKE_CFLAGS_SSE4_2     = -msse4.2
++QMAKE_CFLAGS_AVX        = -mavx
++QMAKE_CFLAGS_AVX2       = -mavx2
++QMAKE_CFLAGS_IWMMXT     = -mcpu=iwmmxt
++QMAKE_CFLAGS_NEON       = -mfpu=neon
  
  QMAKE_CXX               = g++
  QMAKE_CXXFLAGS          = $$QMAKE_CFLAGS
@@ -73,15 +84,15 @@
  
  QMAKE_AR                = ar cqs
  QMAKE_OBJCOPY           = objcopy
---- origsrc/qtbase-opensource-src-5.1.0/mkspecs/cygwin-g++/qplatformdefs.h	2013-07-02 02:09:32.000000000 -0500
-+++ src/qtbase-opensource-src-5.1.0/mkspecs/cygwin-g++/qplatformdefs.h	2013-08-14 12:07:13.381926700 -0500
+--- origsrc/qtbase-opensource-src-5.3.2/mkspecs/cygwin-g++/qplatformdefs.h	2014-09-11 05:48:07.000000000 -0500
++++ src/qtbase-opensource-src-5.3.2/mkspecs/cygwin-g++/qplatformdefs.h	2014-10-24 12:02:24.420431300 -0500
 @@ -71,14 +71,12 @@
  
  #include <sys/types.h>
  #include <sys/ioctl.h>
 -// Cygwin does not provide <sys/ipc.h> and <sys/shm.h> because it
 -// doesn't support SysV IPC or shared memory. See for example:
--// 	http://afni.nimh.nih.gov/afni/afniboard/messages/1725.html
+-//      http://afni.nimh.nih.gov/afni/afniboard/messages/1725.html
 +#include <sys/ipc.h>
 +#include <sys/shm.h>
  #include <sys/time.h>
@@ -92,25 +103,25 @@
  #include <netinet/in.h>
  
  #define QT_NO_USE_FSEEKO
---- origsrc/qtbase-opensource-src-5.1.0/mkspecs/features/qt_functions.prf	2013-07-02 02:09:32.000000000 -0500
-+++ src/qtbase-opensource-src-5.1.0/mkspecs/features/qt_functions.prf	2013-08-14 16:05:07.780375500 -0500
-@@ -254,7 +254,7 @@ defineTest(qtAddTargetEnv) {
-             else: \
+--- origsrc/qtbase-opensource-src-5.3.2/mkspecs/features/qt_functions.prf	2014-09-11 05:48:07.000000000 -0500
++++ src/qtbase-opensource-src-5.3.2/mkspecs/features/qt_functions.prf	2014-10-24 12:02:24.425431900 -0500
+@@ -261,7 +261,7 @@ defineTest(qtAddTargetEnv) {
                  deppath += $$system_path($$eval(QT.$${dep}.libs))
+             ptypes += $$eval(QT.$${dep}.plugin_types)
          }
 -        equals(QMAKE_HOST.os, Windows) {
 +        contains(QMAKE_HOST.os, Windows|CYGWIN.*) {
              deppath.name = PATH
-         } else:contains(QMAKE_HOST.os, Linux|FreeBSD) {
+         } else:contains(QMAKE_HOST.os, Linux|FreeBSD|OpenBSD|NetBSD|DragonFly|SunOS|HP-UX|QNX|GNU) {
              deppath.name = LD_LIBRARY_PATH
---- origsrc/qtbase-opensource-src-5.1.0/src/tools/bootstrap/bootstrap.pro	2013-07-02 02:10:00.000000000 -0500
-+++ src/qtbase-opensource-src-5.1.0/src/tools/bootstrap/bootstrap.pro	2013-08-14 14:02:35.627856500 -0500
+--- origsrc/qtbase-opensource-src-5.3.2/src/tools/bootstrap/bootstrap.pro	2014-09-11 05:48:01.000000000 -0500
++++ src/qtbase-opensource-src-5.3.2/src/tools/bootstrap/bootstrap.pro	2014-10-24 12:02:24.432432800 -0500
 @@ -5,7 +5,7 @@ QT =
  CONFIG += internal_module force_bootstrap
  
  # otherwise mingw headers do not declare common functions like putenv
--win32-g++*:QMAKE_CXXFLAGS_CXX11 = -std=gnu++0x
-+cygwin-g++|win32-g++*:QMAKE_CXXFLAGS_CXX11 = -std=gnu++0x
+-mingw:QMAKE_CXXFLAGS_CXX11 = -std=gnu++0x
++cygwin-g++|mingw:QMAKE_CXXFLAGS_CXX11 = -std=gnu++11
  
  MODULE_DEFINES = \
          QT_BOOTSTRAPPED \
