@@ -118,7 +118,7 @@ src_install() {
 
 PKG_NAMES="libQt5Core5 libQt5Core-devel libQt5Sql5 libQt5Sql-devel
            libQt5Gui5 libQt5Gui-devel ${NAME}-doc ${NAME}-examples"
-libQt5Core5_REQUIRES="ca-certificates"
+libQt5Core5_REQUIRES="ca-certificates tzcode"
 libQt5Core5_CONTENTS="
 	usr/bin/cygQt5Concurrent-5.dll
 	usr/bin/cygQt5Core-5.dll
