@@ -1,6 +1,6 @@
 NAME="qt5-base"
 VERSION=5.3.2
-RELEASE=1
+RELEASE=2
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
 DESCRIPTION="Qt is a cross-platform application framework for desktop and
@@ -51,7 +51,7 @@ src_compile() {
 		-libexecdir /usr/lib/qt5/libexec \
 		-datadir /usr/share/qt5 \
 		-docdir /usr/share/qt5/doc \
-		-sysconfdir /etc/qt5 \
+		-sysconfdir /etc/xdg \
 		-translationdir /usr/share/qt5/translations \
 		-examplesdir /usr/lib/qt5/examples \
 		-testsdir /usr/lib/qt5/tests \
@@ -114,6 +114,20 @@ src_install() {
 	# remove package-specific flags from qmake configuration
 	sed -i -e 's| -fdebug-prefix[^ ]*||g' qmodule.pri
 	popd
+
+	pushd ${D}/usr/lib/cmake
+	for d in Qt5[A-Z]*
+	do
+		if [ -d ${D}/usr/include/qt5/${d/5}/${VERSION}/${d/5} ]
+		then
+			cat > ${d}/ExtraSourceIncludes.cmake <<_EOF
+set(${d}_PRIVATE_INCLUDE_DIRS
+    "/usr/include/qt5/${d/5}/${VERSION}"
+    "/usr/include/qt5/${d/5}/${VERSION}/${d/5}"
+)
+_EOF
+		fi
+	done
 }
 
 PKG_NAMES="libQt5Core5 libQt5Core-devel libQt5Sql5 libQt5Sql-devel
