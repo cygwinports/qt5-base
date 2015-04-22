@@ -1,6 +1,6 @@
 NAME="qt5-base"
-VERSION=5.3.2
-RELEASE=4
+VERSION=5.4.1
+RELEASE=1
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
 DESCRIPTION="Qt is a cross-platform application framework for desktop and
@@ -8,14 +8,22 @@ embedded development. Qt enables programmers to create advanced GUI
 applications once and deploy them to Windows, Mac OS X and Linux without
 rewriting the source code. Companies using Qt can leverage software
 investments made on one platform across many others."
-HOMEPAGE="http://qt-project.org/"
-SRC_URI="http://download.qt-project.org/official_releases/qt/${VERSION%.*}/${VERSION}/submodules/qtbase-opensource-src-${VERSION}.tar.xz"
+HOMEPAGE="http://www.qt.io/"
+SRC_URI="http://download.qt.io/official_releases/qt/${VERSION%.*}/${VERSION}/submodules/qtbase-opensource-src-${VERSION}.tar.xz"
 SRC_DIR="qtbase-opensource-src-${VERSION}"
+#	fedora/qt5-poll.patch
 PATCH_URI="
-	http://pkgs.fedoraproject.org/cgit/qt5-qtbase.git/plain/qtbase-opensource-src-5.3.2-QTBUG-35459.patch?h=f21
-	http://pkgs.fedoraproject.org/cgit/qt5-qtbase.git/plain/qtbase-5.3.1-prefer-qpa-implementation.patch?h=f21
-	http://pkgs.fedoraproject.org/cgit/qt5-qtbase.git/plain/qtbase-opensource-src-5.2.0-enable_ft_lcdfilter.patch?h=f21
-	http://code.qt.io/cgit/qt/qtbase.git/patch/?id=661f6bf#/qt5-base-CVE-2015-0295.patch
+	fedora/qtbase-opensource-src-5.3.2-QTBUG-35459.patch
+	fedora/qtbase-opensource-src-5.2.0-enable_ft_lcdfilter.patch
+	fedora/qtbase-opensource-src-5.4.0-QTBUG-42985.patch
+	fedora/qt5-qtbase-5.5-Get_display_number_when_screen_number_is_omitted.patch
+	fedora/0012-Fix-a-crash-in-QPlainTextEdit-documentChanged.patch
+	fedora/0094-Fix-Meta-.-shortcuts-on-XCB.patch
+	fedora/0132-Call-ofono-nm-Registered-delayed-in-constructor-othe.patch
+	fedora/0136-Make-sure-there-s-a-scene-before-using-it.patch
+	fedora/0149-Fix-a-division-by-zero-when-processing-malformed-BMP.patch
+	fedora/0200-Fixes-crash-in-gif-image-decoder.patch
+	fedora/0201-Fixes-crash-in-bmp-and-ico-image-decoding.patch
 	5.1.0-cygwin-dlopen.patch
 	5.3.2-cygwin-mkspecs.patch
 	5.3.2-cygwin-qmake.patch
@@ -34,8 +42,6 @@ CXXFLAGS+=" -DFD_SETSIZE=1024"
 
 src_compile() {
 	cd ${B}
-
-	export PATH="${B}/bin:${B}/lib:$PATH"
 
 	# -no-iconv: if -icu is used, iconv is not (see src/corelib/codecs/)
 	# -no-gtkstyle: causes segfaults in QGtk2Painter::paintShadow
@@ -58,7 +64,7 @@ src_compile() {
 		-testsdir /usr/lib/qt5/tests \
 		-platform cygwin-g++ \
 		-confirm-license -opensource \
-		-release -c++11 -shared -process -optimized-qmake \
+		-release -c++11 -shared -optimized-qmake \
 		-no-rpath -no-reduce-exports -no-reduce-relocations \
 		-no-largefile \
 		-accessibility \
@@ -72,10 +78,14 @@ src_compile() {
 		-openssl-linked -system-pcre -system-harfbuzz \
 		-system-xcb -system-xkbcommon \
 		-gui -widgets -no-cups -icu -iconv -pch \
-		-xcb -egl -no-eglfs -opengl desktop -glib -gtkstyle \
+		-xcb -no-egl -no-eglfs -opengl desktop -glib -gtkstyle \
 		|| error "configure failed"
 
+	PATH="${B}/bin:${B}/lib:$PATH" \
 	cygmake
+
+	# force regeneration to use in-tree qdoc
+	find . -name 'Makefile*' -exec grep -l /usr/lib/qt5/bin/qdoc '{}' + | xargs rm
 	# default is insufficient for Qt5Gui and Qt5Widgets
 	peflags -x0x400000 bin/qdoc.exe
 	cygmake docs
@@ -184,7 +194,6 @@ libQt5Gui5_CONTENTS="
 	usr/bin/cygQt5OpenGL-5.dll
 	usr/bin/cygQt5PrintSupport-5.dll
 	usr/bin/cygQt5Widgets-5.dll
-	usr/lib/qt5/plugins/accessible/
 	usr/lib/qt5/plugins/imageformats/
 	usr/lib/qt5/plugins/platforminputcontexts/
 	usr/lib/qt5/plugins/platforms/
@@ -194,6 +203,7 @@ libQt5Gui_devel_CONTENTS="
 	usr/include/qt5/QtGui/
 	usr/include/qt5/QtOpenGL/
 	usr/include/qt5/QtOpenGLExtensions/
+	usr/include/qt5/QtPlatformHeaders/
 	usr/include/qt5/QtPlatformSupport/
 	usr/include/qt5/QtPrintSupport/
 	usr/include/qt5/QtWidgets/
