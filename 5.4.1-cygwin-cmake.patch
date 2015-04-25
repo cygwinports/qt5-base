@@ -1,5 +1,5 @@
---- origsrc/qtbase-opensource-src-5.3.2/mkspecs/features/create_cmake.prf	2014-09-11 05:48:07.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/mkspecs/features/create_cmake.prf	2014-10-24 12:25:45.771380200 -0500
+--- origsrc/qtbase-opensource-src-5.4.1/mkspecs/features/create_cmake.prf	2014-09-11 05:48:07.000000000 -0500
++++ src/qtbase-opensource-src-5.4.1/mkspecs/features/create_cmake.prf	2015-04-24 17:11:10.871295900 -0500
 @@ -82,6 +82,12 @@ win32:!wince:!static:!staticlib {
          CMAKE_DLL_DIR = $$[QT_INSTALL_BINS]/
          CMAKE_DLL_DIR_IS_ABSOLUTE = True
@@ -13,7 +13,7 @@
  } else {
      CMAKE_DLL_DIR = $$CMAKE_LIB_DIR
      CMAKE_DLL_DIR_IS_ABSOLUTE = $$CMAKE_LIB_DIR_IS_ABSOLUTE
-@@ -138,6 +144,17 @@ contains(CONFIG, plugin) {
+@@ -143,6 +149,17 @@ contains(CONFIG, plugin) {
              CMAKE_PLUGIN_LOCATION_RELEASE = $$PLUGIN_TYPE/$${TARGET}.lib
              CMAKE_PLUGIN_LOCATION_DEBUG = $$PLUGIN_TYPE/$${TARGET}d.lib
          }
@@ -31,12 +31,13 @@
      } else {
          mac {
              isEmpty(CMAKE_STATIC_TYPE): CMAKE_PlUGIN_EXT = .dylib
-@@ -231,6 +248,24 @@ mac {
+@@ -236,6 +253,25 @@ mac {
              CMAKE_IMPLIB_FILE_LOCATION_RELEASE = $${CMAKE_QT_STEM}.lib
          }
      }
 +} else:cygwin-* {
 +    CMAKE_WINDOWS_BUILD = "true"
++    CMAKE_CYGWIN_BUILD = "true"
 +    !isEmpty(CMAKE_STATIC_TYPE) {
 +        CMAKE_LIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}.a
 +        CMAKE_LIB_FILE_LOCATION_RELEASE = lib$${CMAKE_QT_STEM}.a
@@ -56,3 +57,21 @@
  } else {
      !isEmpty(CMAKE_STATIC_TYPE) {
          CMAKE_LIB_FILE_LOCATION_DEBUG = lib$${CMAKE_QT_STEM}.a
+--- origsrc/qtbase-opensource-src-5.4.1/src/corelib/Qt5CoreConfigExtras.cmake.in	2015-02-16 22:56:50.000000000 -0600
++++ src/qtbase-opensource-src-5.4.1/src/corelib/Qt5CoreConfigExtras.cmake.in	2015-04-24 17:15:20.611508900 -0500
+@@ -98,6 +98,7 @@ set(QT_LIBINFIX \"$${QT_LIBINFIX}\")
+ !!ENDIF
+ 
+ !!IF !isEmpty(CMAKE_WINDOWS_BUILD)
++!!IF isEmpty(CMAKE_CYGWIN_BUILD)
+ set(Qt5Core_QTMAIN_LIBRARIES Qt5::WinMain)
+ 
+ if (NOT TARGET Qt5::WinMain)
+@@ -155,6 +156,7 @@ if (NOT TARGET Qt5::WinMain)
+     endif()
+ endif()
+ !!ENDIF
++!!ENDIF
+ 
+ get_filename_component(_Qt5CoreConfigDir ${CMAKE_CURRENT_LIST_FILE} PATH)
+ 
