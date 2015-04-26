@@ -1,6 +1,25 @@
---- origsrc/qtbase-opensource-src-5.3.2/src/widgets/styles/qgtkglobal_p.h	2014-09-11 05:48:01.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/src/widgets/styles/qgtkglobal_p.h	2014-10-24 12:03:52.152571800 -0500
-@@ -58,6 +58,9 @@
+--- origsrc/qtbase-opensource-src-5.4.1/src/widgets/styles/qgtk2painter.cpp	2015-02-16 22:56:39.000000000 -0600
++++ src/qtbase-opensource-src-5.4.1/src/widgets/styles/qgtk2painter.cpp	2015-04-26 10:57:48.642237300 -0500
+@@ -97,11 +97,12 @@ static void initGtk()
+     if (!initialized) {
+         // enforce the "0" suffix, so we'll open libgtk-x11-2.0.so.0
+         QLibrary libgtk(QLS("gtk-x11-2.0"), 0, 0);
++        QLibrary libgdk(QLS("gdk-x11-2.0"), 0, 0);
+ 
+-        QGtk2PainterPrivate::gdk_pixmap_new = (Ptr_gdk_pixmap_new)libgtk.resolve("gdk_pixmap_new");
+-        QGtk2PainterPrivate::gdk_pixbuf_get_from_drawable = (Ptr_gdk_pixbuf_get_from_drawable)libgtk.resolve("gdk_pixbuf_get_from_drawable");
+-        QGtk2PainterPrivate::gdk_draw_rectangle = (Ptr_gdk_draw_rectangle)libgtk.resolve("gdk_draw_rectangle");
+-        QGtk2PainterPrivate::gdk_drawable_unref = (Ptr_gdk_drawable_unref)libgtk.resolve("gdk_drawable_unref");
++        QGtk2PainterPrivate::gdk_pixmap_new = (Ptr_gdk_pixmap_new)libgdk.resolve("gdk_pixmap_new");
++        QGtk2PainterPrivate::gdk_pixbuf_get_from_drawable = (Ptr_gdk_pixbuf_get_from_drawable)libgdk.resolve("gdk_pixbuf_get_from_drawable");
++        QGtk2PainterPrivate::gdk_draw_rectangle = (Ptr_gdk_draw_rectangle)libgdk.resolve("gdk_draw_rectangle");
++        QGtk2PainterPrivate::gdk_drawable_unref = (Ptr_gdk_drawable_unref)libgdk.resolve("gdk_drawable_unref");
+ 
+         QGtk2PainterPrivate::gtk_paint_check = (Ptr_gtk_paint_check)libgtk.resolve("gtk_paint_check");
+         QGtk2PainterPrivate::gtk_paint_box = (Ptr_gtk_paint_box)libgtk.resolve("gtk_paint_box");
+--- origsrc/qtbase-opensource-src-5.4.1/src/widgets/styles/qgtkglobal_p.h	2015-04-26 11:10:03.924106300 -0500
++++ src/qtbase-opensource-src-5.4.1/src/widgets/styles/qgtkglobal_p.h	2015-04-24 17:00:47.169595900 -0500
+@@ -50,6 +50,9 @@
  
  #undef signals // Collides with GTK symbols
  #include <gtk/gtk.h>
@@ -10,9 +29,9 @@
  
  typedef unsigned long XID;
  
---- origsrc/qtbase-opensource-src-5.3.2/src/widgets/styles/qgtkstyle_p.cpp	2014-09-11 05:48:01.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/src/widgets/styles/qgtkstyle_p.cpp	2014-10-24 12:03:52.163573200 -0500
-@@ -335,6 +335,9 @@ void QGtkStylePrivate::resolveGtk() cons
+--- origsrc/qtbase-opensource-src-5.4.1/src/widgets/styles/qgtkstyle_p.cpp	2015-04-26 11:10:04.019118300 -0500
++++ src/qtbase-opensource-src-5.4.1/src/widgets/styles/qgtkstyle_p.cpp	2015-04-24 17:00:47.173096300 -0500
+@@ -327,6 +327,9 @@ void QGtkStylePrivate::resolveGtk() cons
  {
      // enforce the "0" suffix, so we'll open libgtk-x11-2.0.so.0
      QLibrary libgtk(QLS("gtk-x11-2.0"), 0, 0);
@@ -22,7 +41,7 @@
  
      gtk_init = (Ptr_gtk_init)libgtk.resolve("gtk_init");
      gtk_window_new = (Ptr_gtk_window_new)libgtk.resolve("gtk_window_new");
-@@ -342,15 +345,15 @@ void QGtkStylePrivate::resolveGtk() cons
+@@ -334,15 +337,15 @@ void QGtkStylePrivate::resolveGtk() cons
      gtk_widget_destroy = (Ptr_gtk_widget_destroy)libgtk.resolve("gtk_widget_destroy");
      gtk_widget_realize = (Ptr_gtk_widget_realize)libgtk.resolve("gtk_widget_realize");
  
@@ -47,7 +66,7 @@
  
      gtk_widget_set_default_direction = (Ptr_gtk_widget_set_default_direction)libgtk.resolve("gtk_widget_set_default_direction");
      gtk_widget_modify_fg = (Ptr_gtk_widget_modify_color)libgtk.resolve("gtk_widget_modify_fg");
-@@ -423,14 +426,14 @@ void QGtkStylePrivate::resolveGtk() cons
+@@ -415,14 +418,14 @@ void QGtkStylePrivate::resolveGtk() cons
      gtk_widget_set_can_default = (Ptr_gtk_widget_set_can_default)libgtk.resolve("gtk_widget_set_can_default");
      gtk_window_set_default = (Ptr_gtk_window_set_default)libgtk.resolve("gtk_window_set_default");
  
