@@ -1,6 +1,6 @@
 NAME="qt5-base"
 VERSION=5.4.1
-RELEASE=2
+RELEASE=3
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
 DESCRIPTION="Qt is a cross-platform application framework for desktop and
@@ -25,7 +25,7 @@ PATCH_URI="
 	fedora/0200-Fixes-crash-in-gif-image-decoder.patch
 	fedora/0201-Fixes-crash-in-bmp-and-ico-image-decoding.patch
 	5.1.0-cygwin-dlopen.patch
-	5.3.2-cygwin-mkspecs.patch
+	5.4.1-cygwin-mkspecs.patch
 	5.3.2-cygwin-qmake.patch
 	5.3.2-cygwin-unix.patch
 	5.4.1-gtkstyle.patch
@@ -35,10 +35,11 @@ PATCH_URI="
 	5.3.2-cygwin-resolv.patch
 	5.4.1-cygwin-cmake.patch
 	5.2.1-cygwin-opengl.patch
+	5.4.1-cygwin-dllexport.patch
 "
 
-#CFLAGS+=" -DFD_SETSIZE=1024"
-#CXXFLAGS+=" -DFD_SETSIZE=1024"
+CFLAGS+=" -fno-keep-inline-dllexport"
+CXXFLAGS+=" -fno-keep-inline-dllexport"
 
 src_compile() {
 	cd ${B}
@@ -240,4 +241,4 @@ qt5_base_doc_CONTENTS="usr/share/qt5/doc/q*"
 qt5_base_examples_CATEGORY="X11"
 qt5_base_examples_CONTENTS="usr/lib/qt5/examples/"
 
-DIFF_EXCLUDES="3rdparty"
+DIFF_EXCLUDES="3rdparty QtConfig qconfig.h qfeatures.h"

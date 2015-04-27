@@ -1,18 +1,20 @@
---- origsrc/qtbase-opensource-src-5.3.2/mkspecs/cygwin-g++/qmake.conf	2014-09-11 05:48:07.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/mkspecs/cygwin-g++/qmake.conf	2014-10-24 12:02:24.415930700 -0500
-@@ -14,8 +14,11 @@ QMAKE_COMPILER          = gcc
+--- origsrc/qtbase-opensource-src-5.4.1/mkspecs/cygwin-g++/qmake.conf	2015-04-27 13:53:07.534373600 -0500
++++ src/qtbase-opensource-src-5.4.1/mkspecs/cygwin-g++/qmake.conf	2015-04-26 20:36:33.611248400 -0500
+@@ -14,9 +14,12 @@ QMAKE_COMPILER          = gcc
  QMAKE_CC                = gcc
  QMAKE_LEX               = flex
  QMAKE_LEXFLAGS          =
 -QMAKE_YACC              = byacc
 +QMAKE_YACC              = yacc
  QMAKE_YACCFLAGS         = -d
+-QMAKE_CFLAGS            = -pipe
 +QMAKE_YACCFLAGS_MANGLE  = -p $base -b $base
 +QMAKE_YACC_HEADER       = $base.tab.h
 +QMAKE_YACC_SOURCE       = $base.tab.c
- QMAKE_CFLAGS            = -pipe
++QMAKE_CFLAGS            = -pipe -fno-keep-inline-dllexport
  QMAKE_CFLAGS_DEPS       = -M
  QMAKE_CFLAGS_WARN_ON    = -Wall -W
+ QMAKE_CFLAGS_WARN_OFF   = -w
 @@ -25,9 +28,23 @@ QMAKE_CFLAGS_DEBUG      = -g
  QMAKE_CFLAGS_SHLIB      =
  QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
@@ -37,7 +39,7 @@
  QMAKE_CXXFLAGS_DEPS     = $$QMAKE_CFLAGS_DEPS
  QMAKE_CXXFLAGS_WARN_ON  = $$QMAKE_CFLAGS_WARN_ON
  QMAKE_CXXFLAGS_WARN_OFF = $$QMAKE_CFLAGS_WARN_OFF
-@@ -36,13 +43,21 @@ QMAKE_CXXFLAGS_DEBUG    = $$QMAKE_CFLAGS
+@@ -36,13 +53,21 @@ QMAKE_CXXFLAGS_DEBUG    = $$QMAKE_CFLAGS
  QMAKE_CXXFLAGS_SHLIB    = $$QMAKE_CFLAGS_SHLIB
  QMAKE_CXXFLAGS_YACC     = $$QMAKE_CFLAGS_YACC
  QMAKE_CXXFLAGS_THREAD   = $$QMAKE_CFLAGS_THREAD
@@ -63,7 +65,7 @@
  
  QMAKE_LINK              = g++
  QMAKE_LINK_SHLIB        = g++
-@@ -53,9 +63,10 @@ QMAKE_LFLAGS_RELEASE    =
+@@ -53,9 +78,11 @@ QMAKE_LFLAGS_RELEASE    =
  QMAKE_LFLAGS_DEBUG      =
  QMAKE_LFLAGS_SHLIB      = -shared
  QMAKE_LFLAGS_PLUGIN     = $$QMAKE_LFLAGS_SHLIB
@@ -73,10 +75,11 @@
 -QMAKE_LFLAGS_RPATH      = -Wl,-rpath,
 +QMAKE_LFLAGS_RPATH      =
 +QMAKE_LFLAGS_CXX11      =
++QMAKE_LFLAGS_GCSECTIONS = -Wl,--gc-sections
  QMAKE_CYGWIN_SHLIB      = 1
  QMAKE_CYGWIN_EXE        = 1
  
-@@ -64,9 +75,10 @@ QMAKE_LIBS_DYNLOAD      = -ldl
+@@ -64,9 +91,10 @@ QMAKE_LIBS_DYNLOAD      = -ldl
  QMAKE_LIBS_X11          = -lXext -lX11
  QMAKE_LIBS_OPENGL       = -lGL
  QMAKE_LIBS_THREAD       = -lpthread
@@ -88,9 +91,9 @@
  
  QMAKE_AR                = ar cqs
  QMAKE_OBJCOPY           = objcopy
---- origsrc/qtbase-opensource-src-5.3.2/mkspecs/cygwin-g++/qplatformdefs.h	2014-09-11 05:48:07.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/mkspecs/cygwin-g++/qplatformdefs.h	2014-10-24 12:02:24.420431300 -0500
-@@ -71,14 +71,12 @@
+--- origsrc/qtbase-opensource-src-5.4.1/mkspecs/cygwin-g++/qplatformdefs.h	2015-04-27 13:53:07.549375500 -0500
++++ src/qtbase-opensource-src-5.4.1/mkspecs/cygwin-g++/qplatformdefs.h	2015-04-26 15:29:03.789918600 -0500
+@@ -63,14 +63,12 @@
  
  #include <sys/types.h>
  #include <sys/ioctl.h>
@@ -107,9 +110,9 @@
  #include <netinet/in.h>
  
  #define QT_NO_USE_FSEEKO
---- origsrc/qtbase-opensource-src-5.3.2/mkspecs/features/qt_functions.prf	2014-09-11 05:48:07.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/mkspecs/features/qt_functions.prf	2014-10-24 12:02:24.425431900 -0500
-@@ -261,7 +261,7 @@ defineTest(qtAddTargetEnv) {
+--- origsrc/qtbase-opensource-src-5.4.1/mkspecs/features/qt_functions.prf	2015-04-27 13:53:07.553376000 -0500
++++ src/qtbase-opensource-src-5.4.1/mkspecs/features/qt_functions.prf	2015-04-26 15:29:03.793419100 -0500
+@@ -262,7 +262,7 @@ defineTest(qtAddTargetEnv) {
                  deppath += $$system_path($$eval(QT.$${dep}.libs))
              ptypes += $$eval(QT.$${dep}.plugin_types)
          }
@@ -118,8 +121,8 @@
              deppath.name = PATH
          } else:contains(QMAKE_HOST.os, Linux|FreeBSD|OpenBSD|NetBSD|DragonFly|SunOS|HP-UX|QNX|GNU) {
              deppath.name = LD_LIBRARY_PATH
---- origsrc/qtbase-opensource-src-5.3.2/src/tools/bootstrap/bootstrap.pro	2014-09-11 05:48:01.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/src/tools/bootstrap/bootstrap.pro	2014-10-24 12:02:24.432432800 -0500
+--- origsrc/qtbase-opensource-src-5.4.1/src/tools/bootstrap/bootstrap.pro	2015-04-27 13:53:07.557876600 -0500
++++ src/qtbase-opensource-src-5.4.1/src/tools/bootstrap/bootstrap.pro	2015-04-26 15:29:03.796919500 -0500
 @@ -5,7 +5,7 @@ QT =
  CONFIG += internal_module force_bootstrap
  
