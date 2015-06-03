@@ -1,6 +1,6 @@
 NAME="qt5-base"
 VERSION=5.4.1
-RELEASE=3
+RELEASE=4
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
 DESCRIPTION="Qt is a cross-platform application framework for desktop and
@@ -16,7 +16,11 @@ PATCH_URI="
 	fedora/qtbase-opensource-src-5.3.2-QTBUG-35459.patch
 	fedora/qtbase-opensource-src-5.2.0-enable_ft_lcdfilter.patch
 	fedora/qtbase-opensource-src-5.4.0-QTBUG-42985.patch
+	fedora/qtbase-opensource-src-5.4.1-QTBUG-33093.patch
+	fedora/qtbase-opensource-src-5.4.1-QTBUG-45484.patch
+	fedora/0002-xcb-set-SM_CLIENT_ID-property.patch
 	fedora/qt5-qtbase-5.5-Get_display_number_when_screen_number_is_omitted.patch
+	fedora/0004-Fix-QPrinter-setPaperSize-regression-when-using-QPri.patch
 	fedora/0012-Fix-a-crash-in-QPlainTextEdit-documentChanged.patch
 	fedora/0094-Fix-Meta-.-shortcuts-on-XCB.patch
 	fedora/0132-Call-ofono-nm-Registered-delayed-in-constructor-othe.patch
@@ -24,6 +28,8 @@ PATCH_URI="
 	fedora/0149-Fix-a-division-by-zero-when-processing-malformed-BMP.patch
 	fedora/0200-Fixes-crash-in-gif-image-decoder.patch
 	fedora/0201-Fixes-crash-in-bmp-and-ico-image-decoding.patch
+	fedora/0240-QLockFile-fix-deadlock-when-the-lock-file-is-corrupt.patch
+	fedora/0248-QNAM-Fix-upload-corruptions-when-server-closes-conne.patch
 	5.1.0-cygwin-dlopen.patch
 	5.4.1-cygwin-mkspecs.patch
 	5.3.2-cygwin-qmake.patch
