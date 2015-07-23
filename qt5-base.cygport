@@ -1,6 +1,6 @@
 NAME="qt5-base"
 VERSION=5.4.2
-RELEASE=1
+RELEASE=2
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
 DESCRIPTION="Qt is a cross-platform application framework for desktop and
@@ -34,6 +34,7 @@ PATCH_URI="
 	5.4.1-cygwin-cmake.patch
 	5.2.1-cygwin-opengl.patch
 	5.4.1-cygwin-dllexport.patch
+	5.4.2-platformsupport.patch
 "
 
 CFLAGS+=" -fno-keep-inline-dllexport"

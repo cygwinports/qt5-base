@@ -1,0 +1,63 @@
+--- origsrc/qtbase-opensource-src-5.4.2/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2015-05-29 15:30:28.000000000 -0500
++++ src/qtbase-opensource-src-5.4.2/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2015-07-21 22:12:33.749156300 -0500
+@@ -48,13 +48,16 @@ static inline QByteArray detectDesktopEn
+ {
+     const QByteArray xdgCurrentDesktop = qgetenv("XDG_CURRENT_DESKTOP");
+     if (!xdgCurrentDesktop.isEmpty())
+-        return xdgCurrentDesktop.toUpper(); // KDE, GNOME, UNITY, LXDE, MATE, XFCE...
++        return xdgCurrentDesktop.contains("GNOME") ? "GNOME" // GNOME, GNOME Classic, GNOME Flashback
++                                                   : xdgCurrentDesktop.toUpper(); // KDE, UNITY, LXDE, MATE, XFCE...
+ 
+     // Classic fallbacks
+     if (!qEnvironmentVariableIsEmpty("KDE_FULL_SESSION"))
+         return QByteArrayLiteral("KDE");
+     if (!qEnvironmentVariableIsEmpty("GNOME_DESKTOP_SESSION_ID"))
+         return QByteArrayLiteral("GNOME");
++    if (!qEnvironmentVariableIsEmpty("MATE_DESKTOP_SESSION_ID"))
++        return QByteArrayLiteral("MATE");
+ 
+     // Fallback to checking $DESKTOP_SESSION (unreliable)
+     const QByteArray desktopSession = qgetenv("DESKTOP_SESSION");
+@@ -96,8 +99,12 @@ static inline bool detectWebBrowser(QByt
+             browser->append(QStringLiteral(" exec"));
+             return true;
+         }
+-    } else if (desktop == QByteArray("GNOME")) {
+-        if (checkExecutable(QStringLiteral("gnome-open"), browser))
++    } else if (desktop == QByteArray("GNOME") ||
++               desktop == QByteArray("LXDE") ||
++               desktop == QByteArray("LXQT") ||
++               desktop == QByteArray("MATE") ||
++               desktop == QByteArray("XFCE")) {
++        if (checkExecutable(QStringLiteral("gvfs-open"), browser))
+             return true;
+     }
+ 
+--- origsrc/qtbase-opensource-src-5.4.2/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2015-05-29 15:30:28.000000000 -0500
++++ src/qtbase-opensource-src-5.4.2/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2015-07-21 23:38:36.385227800 -0500
+@@ -141,6 +141,8 @@ QStringList QGenericUnixTheme::xdgIconTh
+ QVariant QGenericUnixTheme::themeHint(ThemeHint hint) const
+ {
+     switch (hint) {
++    case QPlatformTheme::SystemIconThemeName:
++        return QVariant(QString(QStringLiteral("oxygen")));
+     case QPlatformTheme::SystemIconFallbackThemeName:
+         return QVariant(QString(QStringLiteral("hicolor")));
+     case QPlatformTheme::IconThemeSearchPaths:
+@@ -544,7 +546,7 @@ QVariant QGnomeTheme::themeHint(QPlatfor
+         return QVariant(QPlatformDialogHelper::GnomeLayout);
+     case QPlatformTheme::SystemIconThemeName:
+     case QPlatformTheme::SystemIconFallbackThemeName:
+-        return QVariant(QString(QStringLiteral("gnome")));
++        return QVariant(QString(QStringLiteral("Adwaita")));
+     case QPlatformTheme::IconThemeSearchPaths:
+         return QVariant(QGenericUnixTheme::xdgIconThemePaths());
+     case QPlatformTheme::StyleNames: {
+@@ -630,6 +632,7 @@ QStringList QGenericUnixTheme::themeName
+ #endif
+         } else if (desktopEnvironment == "GNOME" ||
+                 desktopEnvironment == "X-CINNAMON" ||
++                desktopEnvironment == "X-CYGWIN" ||
+                 desktopEnvironment == "UNITY" ||
+                 desktopEnvironment == "MATE" ||
+                 desktopEnvironment == "XFCE" ||
