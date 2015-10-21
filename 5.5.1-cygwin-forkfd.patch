@@ -1,0 +1,14 @@
+--- origsrc/qtbase-opensource-src-5.5.1/src/3rdparty/forkfd/forkfd.c	2015-10-12 23:35:26.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/src/3rdparty/forkfd/forkfd.c	2015-10-18 17:50:47.878534800 -0500
+@@ -59,6 +59,11 @@
+ #  define HAVE_WAITID   1
+ #endif
+ 
++#if defined(__CYGWIN__)
++#  undef HAVE_WAITID
++#  define HAVE_PIPE2    1
++#endif
++
+ #if defined(__FreeBSD__)
+ #  define HAVE_PIPE2    1
+ #endif

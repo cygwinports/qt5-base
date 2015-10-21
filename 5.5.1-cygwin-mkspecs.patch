@@ -1,5 +1,5 @@
---- origsrc/qtbase-opensource-src-5.4.1/mkspecs/cygwin-g++/qmake.conf	2015-04-27 13:53:07.534373600 -0500
-+++ src/qtbase-opensource-src-5.4.1/mkspecs/cygwin-g++/qmake.conf	2015-04-26 20:36:33.611248400 -0500
+--- origsrc/qtbase-opensource-src-5.5.1/mkspecs/cygwin-g++/qmake.conf	2015-10-12 23:35:32.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/mkspecs/cygwin-g++/qmake.conf	2015-10-18 17:21:59.883214800 -0500
 @@ -14,9 +14,12 @@ QMAKE_COMPILER          = gcc
  QMAKE_CC                = gcc
  QMAKE_LEX               = flex
@@ -91,8 +91,8 @@
  
  QMAKE_AR                = ar cqs
  QMAKE_OBJCOPY           = objcopy
---- origsrc/qtbase-opensource-src-5.4.1/mkspecs/cygwin-g++/qplatformdefs.h	2015-04-27 13:53:07.549375500 -0500
-+++ src/qtbase-opensource-src-5.4.1/mkspecs/cygwin-g++/qplatformdefs.h	2015-04-26 15:29:03.789918600 -0500
+--- origsrc/qtbase-opensource-src-5.5.1/mkspecs/cygwin-g++/qplatformdefs.h	2015-10-12 23:35:32.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/mkspecs/cygwin-g++/qplatformdefs.h	2015-10-18 17:21:59.887215100 -0500
 @@ -63,14 +63,12 @@
  
  #include <sys/types.h>
@@ -110,9 +110,9 @@
  #include <netinet/in.h>
  
  #define QT_NO_USE_FSEEKO
---- origsrc/qtbase-opensource-src-5.4.1/mkspecs/features/qt_functions.prf	2015-04-27 13:53:07.553376000 -0500
-+++ src/qtbase-opensource-src-5.4.1/mkspecs/features/qt_functions.prf	2015-04-26 15:29:03.793419100 -0500
-@@ -262,7 +262,7 @@ defineTest(qtAddTargetEnv) {
+--- origsrc/qtbase-opensource-src-5.5.1/mkspecs/features/qt_functions.prf	2015-10-12 23:35:32.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/mkspecs/features/qt_functions.prf	2015-10-18 17:21:59.891215300 -0500
+@@ -269,7 +269,7 @@ defineTest(qtAddTargetEnv) {
                  deppath += $$system_path($$eval(QT.$${dep}.libs))
              ptypes += $$eval(QT.$${dep}.plugin_types)
          }
@@ -121,8 +121,8 @@
              deppath.name = PATH
          } else:contains(QMAKE_HOST.os, Linux|FreeBSD|OpenBSD|NetBSD|DragonFly|SunOS|HP-UX|QNX|GNU) {
              deppath.name = LD_LIBRARY_PATH
---- origsrc/qtbase-opensource-src-5.4.1/src/tools/bootstrap/bootstrap.pro	2015-04-27 13:53:07.557876600 -0500
-+++ src/qtbase-opensource-src-5.4.1/src/tools/bootstrap/bootstrap.pro	2015-04-26 15:29:03.796919500 -0500
+--- origsrc/qtbase-opensource-src-5.5.1/src/tools/bootstrap/bootstrap.pro	2015-10-12 23:35:29.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/src/tools/bootstrap/bootstrap.pro	2015-10-18 17:21:59.897215600 -0500
 @@ -5,7 +5,7 @@ QT =
  CONFIG += internal_module force_bootstrap
  

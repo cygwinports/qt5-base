@@ -1,6 +1,6 @@
---- origsrc/qtbase-opensource-src-5.3.2/src/corelib/global/qglobal.cpp	2014-09-11 05:48:06.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/src/corelib/global/qglobal.cpp	2014-10-24 12:00:17.929869000 -0500
-@@ -1781,7 +1781,7 @@ QSysInfo::MacVersion QSysInfo::macVersio
+--- origsrc/qtbase-opensource-src-5.5.1/src/corelib/global/qglobal.cpp	2015-10-12 23:35:31.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/src/corelib/global/qglobal.cpp	2015-10-18 17:20:00.473385000 -0500
+@@ -1878,7 +1878,7 @@ QSysInfo::MacVersion QSysInfo::macVersio
  }
  const QSysInfo::MacVersion QSysInfo::MacintoshVersion = QSysInfo::macVersion();
  
@@ -9,20 +9,20 @@
  
  QT_BEGIN_INCLUDE_NAMESPACE
  #include "qt_windows.h"
---- origsrc/qtbase-opensource-src-5.3.2/src/corelib/global/qsysinfo.h	2014-09-11 05:48:06.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/src/corelib/global/qsysinfo.h	2014-10-24 12:00:17.934869600 -0500
-@@ -80,7 +80,7 @@ public:
- #  endif
+--- origsrc/qtbase-opensource-src-5.5.1/src/corelib/global/qsysinfo.h	2015-10-12 23:35:31.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/src/corelib/global/qsysinfo.h	2015-10-18 17:19:53.056960800 -0500
+@@ -110,7 +110,7 @@ public:
+         WV_CE_6     = 0x0400,
+         WV_CE_based = 0x0f00
      };
- #endif
 -#if defined(Q_OS_WIN) || defined(Q_OS_CYGWIN)
 +#if defined(Q_OS_WIN)
-     enum WinVersion {
-         WV_32s      = 0x0001,
-         WV_95       = 0x0002,
---- origsrc/qtbase-opensource-src-5.3.2/src/corelib/io/qfilesystemiterator_p.h	2014-09-11 05:48:06.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/src/corelib/io/qfilesystemiterator_p.h	2014-10-24 12:00:17.938370100 -0500
-@@ -95,7 +95,7 @@ private:
+     static const WinVersion WindowsVersion;
+     static WinVersion windowsVersion();
+ #else
+--- origsrc/qtbase-opensource-src-5.5.1/src/corelib/io/qfilesystemiterator_p.h	2015-10-12 23:35:31.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/src/corelib/io/qfilesystemiterator_p.h	2015-10-18 17:20:00.488385800 -0500
+@@ -87,7 +87,7 @@ private:
  #else
      QT_DIR *dir;
      QT_DIRENT *dirEntry;
@@ -31,9 +31,9 @@
      // for readdir_r
      QScopedPointer<QT_DIRENT, QScopedPointerPodDeleter> mt_file;
  #if defined(QT_EXT_QNX_READDIR_R)
---- origsrc/qtbase-opensource-src-5.3.2/src/corelib/io/qfilesystemiterator_unix.cpp	2014-09-11 05:48:06.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/src/corelib/io/qfilesystemiterator_unix.cpp	2014-10-24 12:00:17.943370700 -0500
-@@ -70,7 +70,7 @@ QFileSystemIterator::QFileSystemIterator
+--- origsrc/qtbase-opensource-src-5.5.1/src/corelib/io/qfilesystemiterator_unix.cpp	2015-10-12 23:35:31.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/src/corelib/io/qfilesystemiterator_unix.cpp	2015-10-18 17:20:00.494386200 -0500
+@@ -62,7 +62,7 @@ QFileSystemIterator::QFileSystemIterator
          if (!nativePath.endsWith('/'))
              nativePath.append('/');
  
@@ -42,7 +42,7 @@
          // ### Race condition; we should use fpathconf and dirfd().
          size_t maxPathName = ::pathconf(nativePath.constData(), _PC_NAME_MAX);
          if (maxPathName == size_t(-1))
-@@ -110,7 +110,7 @@ bool QFileSystemIterator::advance(QFileS
+@@ -102,7 +102,7 @@ bool QFileSystemIterator::advance(QFileS
      lastError = QT_EXT_QNX_READDIR_R(dir, mt_file.data(), &dirEntry, direntSize);
      if (lastError)
          return false;
@@ -51,9 +51,9 @@
      lastError = QT_READDIR_R(dir, mt_file.data(), &dirEntry);
      if (lastError)
          return false;
---- origsrc/qtbase-opensource-src-5.3.2/src/widgets/kernel/qapplication_p.h	2014-09-11 05:48:02.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/src/widgets/kernel/qapplication_p.h	2014-10-24 12:00:17.948371400 -0500
-@@ -92,7 +92,7 @@ extern Q_GUI_EXPORT bool qt_is_gui_used;
+--- origsrc/qtbase-opensource-src-5.5.1/src/widgets/kernel/qapplication_p.h	2015-10-12 23:35:22.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/src/widgets/kernel/qapplication_p.h	2015-10-18 17:20:00.500386500 -0500
+@@ -84,7 +84,7 @@ extern Q_GUI_EXPORT bool qt_is_gui_used;
  extern QClipboard *qt_clipboard;
  #endif
  

@@ -1,6 +1,6 @@
---- origsrc/qtbase-opensource-src-5.3.2/configure	2014-09-11 05:47:55.000000000 -0500
-+++ src/qtbase-opensource-src-5.3.2/configure	2014-10-24 12:06:50.843762700 -0500
-@@ -3773,7 +3773,7 @@ if true; then ###[ '!' -f "$outpath/bin/
+--- origsrc/qtbase-opensource-src-5.5.1/configure	2015-10-12 23:35:07.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/configure	2015-10-18 17:20:12.537075000 -0500
+@@ -4053,7 +4053,7 @@ if true; then ###[ '!' -f "$outpath/bin/
              echo "-include \$(notdir \$(DEPEND_SRC:%.cpp=%.d))" >> "$mkfile"
          else
              cat "$in_mkfile" >> "$mkfile"

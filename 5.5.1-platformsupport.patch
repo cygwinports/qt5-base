@@ -1,5 +1,5 @@
---- origsrc/qtbase-opensource-src-5.4.2/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2015-05-29 15:30:28.000000000 -0500
-+++ src/qtbase-opensource-src-5.4.2/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2015-07-21 22:12:33.749156300 -0500
+--- origsrc/qtbase-opensource-src-5.5.1/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2015-10-12 23:35:27.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2015-10-18 17:23:13.272412500 -0500
 @@ -48,13 +48,16 @@ static inline QByteArray detectDesktopEn
  {
      const QByteArray xdgCurrentDesktop = qgetenv("XDG_CURRENT_DESKTOP");
@@ -18,7 +18,7 @@
  
      // Fallback to checking $DESKTOP_SESSION (unreliable)
      const QByteArray desktopSession = qgetenv("DESKTOP_SESSION");
-@@ -96,8 +99,12 @@ static inline bool detectWebBrowser(QByt
+@@ -96,8 +99,12 @@ static inline bool detectWebBrowser(cons
              browser->append(QStringLiteral(" exec"));
              return true;
          }
@@ -33,9 +33,9 @@
              return true;
      }
  
---- origsrc/qtbase-opensource-src-5.4.2/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2015-05-29 15:30:28.000000000 -0500
-+++ src/qtbase-opensource-src-5.4.2/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2015-07-21 23:38:36.385227800 -0500
-@@ -141,6 +141,8 @@ QStringList QGenericUnixTheme::xdgIconTh
+--- origsrc/qtbase-opensource-src-5.5.1/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2015-10-12 23:35:27.000000000 -0500
++++ src/qtbase-opensource-src-5.5.1/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2015-10-18 17:23:13.276412700 -0500
+@@ -177,6 +177,8 @@ QPlatformSystemTrayIcon *QGenericUnixThe
  QVariant QGenericUnixTheme::themeHint(ThemeHint hint) const
  {
      switch (hint) {
@@ -44,7 +44,7 @@
      case QPlatformTheme::SystemIconFallbackThemeName:
          return QVariant(QString(QStringLiteral("hicolor")));
      case QPlatformTheme::IconThemeSearchPaths:
-@@ -544,7 +546,7 @@ QVariant QGnomeTheme::themeHint(QPlatfor
+@@ -602,7 +604,7 @@ QVariant QGnomeTheme::themeHint(QPlatfor
          return QVariant(QPlatformDialogHelper::GnomeLayout);
      case QPlatformTheme::SystemIconThemeName:
      case QPlatformTheme::SystemIconFallbackThemeName:
@@ -53,11 +53,11 @@
      case QPlatformTheme::IconThemeSearchPaths:
          return QVariant(QGenericUnixTheme::xdgIconThemePaths());
      case QPlatformTheme::StyleNames: {
-@@ -630,6 +632,7 @@ QStringList QGenericUnixTheme::themeName
- #endif
-         } else if (desktopEnvironment == "GNOME" ||
-                 desktopEnvironment == "X-CINNAMON" ||
-+                desktopEnvironment == "X-CYGWIN" ||
-                 desktopEnvironment == "UNITY" ||
-                 desktopEnvironment == "MATE" ||
-                 desktopEnvironment == "XFCE" ||
+@@ -694,6 +696,7 @@ QStringList QGenericUnixTheme::themeName
+         QList<QByteArray> gtkBasedEnvironments;
+         gtkBasedEnvironments << "GNOME"
+                              << "X-CINNAMON"
++                             << "X-CYGWIN"
+                              << "UNITY"
+                              << "MATE"
+                              << "XFCE"
