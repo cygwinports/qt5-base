@@ -32,7 +32,7 @@
  DEFINES += XCB_USE_GLX XCB_USE_XLIB
  
  LIBS += -lxcb
-+LIBS_PRIVATE += -lXrender
++LIBS_PRIVATE += -lXrender -lX11
  
  contains(QT_CONFIG, xcb-glx) {
      DEFINES += XCB_HAS_XCB_GLX

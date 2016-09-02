@@ -1,6 +1,6 @@
 NAME="qt5-base"
 VERSION=5.5.1
-RELEASE=1
+RELEASE=2
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
 DESCRIPTION="Qt is a cross-platform application framework for desktop and
@@ -30,6 +30,7 @@ PATCH_URI="
 	5.5.1-cygwin-dllexport.patch
 	5.5.1-platformsupport.patch
 	5.5.1-cygwin-forkfd.patch
+	5.5.1-cygwin-ftm.patch
 "
 
 CFLAGS+=" -fno-keep-inline-dllexport"
@@ -72,7 +73,7 @@ src_compile() {
 		-system-zlib -system-libpng -system-libjpeg -dbus-linked \
 		-openssl-linked -system-pcre -system-harfbuzz \
 		-system-xcb -system-xkbcommon \
-		-gui -widgets -no-cups -icu -iconv -pch \
+		-gui -widgets -no-cups -icu -iconv -no-pch \
 		-xcb -no-egl -no-eglfs -opengl desktop -glib -gtkstyle \
 		|| error "configure failed"
 
