@@ -1,6 +1,6 @@
 NAME="qt5-base"
-VERSION=5.5.1
-RELEASE=2
+VERSION=5.6.2
+RELEASE=1
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
 DESCRIPTION="Qt is a cross-platform application framework for desktop and
@@ -14,27 +14,24 @@ SRC_DIR="qtbase-opensource-src-${VERSION}"
 #	fedora/qt5-poll.patch
 PATCH_URI="
 	fedora/qtbase-opensource-src-5.3.2-QTBUG-35459.patch
-	fedora/qtbase-opensource-src-5.2.0-enable_ft_lcdfilter.patch
-	fedora/qtbase-opensource-src-5.5.1-qdbusconnection_no_debug.patch
-	fedora/qtbase-opensource-src-5.5-disconnect_displays.patch
-	fedora/qtbase-opensource-src-5.4.0-QTBUG-43057.patch
+	fedora/moc-get-the-system-defines-from-the-compiler-itself.patch
 	5.5.1-cygwin-dlopen.patch
-	5.5.1-cygwin-mkspecs.patch
-	5.5.1-cygwin-qmake.patch
+	5.6.2-cygwin-mkspecs.patch
+	5.6.2-cygwin-qmake.patch
 	5.5.1-cygwin-unix.patch
 	5.5.1-gtkstyle.patch
 	5.5.1-makedepend.patch
-	5.5.1-no-undefined.patch
+	5.6.2-no-undefined.patch
 	5.5.1-cygwin-iconv.patch
 	5.5.1-cygwin-cmake.patch
 	5.5.1-cygwin-dllexport.patch
 	5.5.1-platformsupport.patch
-	5.5.1-cygwin-forkfd.patch
-	5.5.1-cygwin-ftm.patch
+	5.6.2-cygwin-forkfd.patch
+	5.6.2-cygwin-network.patch
 "
 
 CFLAGS+=" -fno-keep-inline-dllexport"
-CXXFLAGS+=" -fno-keep-inline-dllexport"
+CXXFLAGS+=" -fno-keep-inline-dllexport -D_GNU_SOURCE"
 
 src_compile() {
 	cd ${B}
@@ -62,7 +59,7 @@ src_compile() {
 		-confirm-license -opensource \
 		-release -c++11 -shared -optimized-qmake \
 		-no-rpath -no-reduce-exports -no-reduce-relocations \
-		-no-largefile \
+		-no-largefile -no-pch \
 		-accessibility \
 		-plugin-sql-mysql \
 		-plugin-sql-odbc \
@@ -73,15 +70,12 @@ src_compile() {
 		-system-zlib -system-libpng -system-libjpeg -dbus-linked \
 		-openssl-linked -system-pcre -system-harfbuzz \
 		-system-xcb -system-xkbcommon \
-		-gui -widgets -no-cups -icu -iconv -no-pch \
+		-gui -widgets -no-cups -icu -iconv \
 		-xcb -no-egl -no-eglfs -opengl desktop -glib -gtkstyle \
 		|| error "configure failed"
 
 	PATH="${B}/bin:${B}/lib:$PATH" \
 	cygmake
-
-	# force regeneration to use in-tree qdoc
-	find . -name 'Makefile*' -exec grep -l /usr/lib/qt5/bin/qdoc '{}' + | xargs rm
 	cygmake docs
 }
 
@@ -98,7 +92,7 @@ src_install() {
 	rm -f ${D}/usr/lib/*.la
 
 	# these are provided by both 4.x and 5.x
-	for x in moc qdbuscpp2xml qdbusxml2cpp qdoc qmake rcc uic
+	for x in moc qdbuscpp2xml qdbusxml2cpp qmake rcc uic
 	do
 		dosym ../lib/qt5/bin/${x}.exe /usr/bin/${x}-qt5
 	done
@@ -171,7 +165,6 @@ libQt5Core_devel_CONTENTS="
 	usr/lib/libQt5Network.*
 	usr/lib/libQt5Test.*
 	usr/lib/libQt5Xml.*
-	usr/lib/pkgconfig/Qt5Bootstrap.pc
 	usr/lib/pkgconfig/Qt5Concurrent.pc
 	usr/lib/pkgconfig/Qt5Core.pc
 	usr/lib/pkgconfig/Qt5DBus.pc
@@ -219,10 +212,8 @@ libQt5Gui_devel_CONTENTS="
 	usr/lib/pkgconfig/Qt5Gui.pc
 	usr/lib/pkgconfig/Qt5OpenGL.pc
 	usr/lib/pkgconfig/Qt5OpenGLExtensions.pc
-	usr/lib/pkgconfig/Qt5PlatformSupport.pc
 	usr/lib/pkgconfig/Qt5PrintSupport.pc
 	usr/lib/pkgconfig/Qt5Widgets.pc
-	usr/lib/pkgconfig/Qt5XcbQpa.pc
 "
 libQt5Sql5_CONTENTS="
 	usr/bin/cygQt5Sql-5.dll

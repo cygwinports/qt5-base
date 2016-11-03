@@ -18,7 +18,7 @@
  
      // Fallback to checking $DESKTOP_SESSION (unreliable)
      const QByteArray desktopSession = qgetenv("DESKTOP_SESSION");
-@@ -96,8 +99,12 @@ static inline bool detectWebBrowser(cons
+@@ -96,8 +99,13 @@ static inline bool detectWebBrowser(cons
              browser->append(QStringLiteral(" exec"));
              return true;
          }
@@ -28,6 +28,7 @@
 +               desktop == QByteArray("LXDE") ||
 +               desktop == QByteArray("LXQT") ||
 +               desktop == QByteArray("MATE") ||
++               desktop == QByteArray("X-CINNAMON") ||
 +               desktop == QByteArray("XFCE")) {
 +        if (checkExecutable(QStringLiteral("gvfs-open"), browser))
              return true;
@@ -44,15 +45,6 @@
      case QPlatformTheme::SystemIconFallbackThemeName:
          return QVariant(QString(QStringLiteral("hicolor")));
      case QPlatformTheme::IconThemeSearchPaths:
-@@ -602,7 +604,7 @@ QVariant QGnomeTheme::themeHint(QPlatfor
-         return QVariant(QPlatformDialogHelper::GnomeLayout);
-     case QPlatformTheme::SystemIconThemeName:
-     case QPlatformTheme::SystemIconFallbackThemeName:
--        return QVariant(QString(QStringLiteral("gnome")));
-+        return QVariant(QString(QStringLiteral("Adwaita")));
-     case QPlatformTheme::IconThemeSearchPaths:
-         return QVariant(QGenericUnixTheme::xdgIconThemePaths());
-     case QPlatformTheme::StyleNames: {
 @@ -694,6 +696,7 @@ QStringList QGenericUnixTheme::themeName
          QList<QByteArray> gtkBasedEnvironments;
          gtkBasedEnvironments << "GNOME"
@@ -61,3 +53,12 @@
                               << "UNITY"
                               << "MATE"
                               << "XFCE"
+@@ -705,6 +708,8 @@ QStringList QGenericUnixTheme::themeName
+                 result.push_back(QLatin1String(QKdeTheme::name));
+ #endif
+             } else if (gtkBasedEnvironments.contains(desktopName)) {
++                if (desktopEnvironment == "GNOME")
++                    result.push_back(QStringLiteral("qgnomeplatform"));
+                 // prefer the GTK2 theme implementation with native dialogs etc.
+                 result.push_back(QStringLiteral("gtk2"));
+                 // fallback to the generic Gnome theme if loading the GTK2 theme fails

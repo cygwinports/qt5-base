@@ -8,8 +8,8 @@ Note that QIconvCodec should not be used when ICU is enabled.
 @@ -1,3 +1,3 @@
  SOURCES = iconv.cpp
  CONFIG -= qt dylib
--mac|mingw|qnx|haiku:LIBS += -liconv
-+mac|mingw|qnx|haiku|cygwin-*:LIBS += -liconv
+-mac|mingw|openbsd|qnx|haiku:LIBS += -liconv
++mac|mingw|openbsd|qnx|haiku|cygwin-*:LIBS += -liconv
 --- origsrc/qtbase-opensource-src-5.5.1/src/corelib/codecs/qiconvcodec.cpp	2015-10-12 23:35:31.000000000 -0500
 +++ src/qtbase-opensource-src-5.5.1/src/corelib/codecs/qiconvcodec.cpp	2015-10-18 17:03:43.832524300 -0500
 @@ -466,7 +466,7 @@ iconv_t QIconvCodec::createIconv_t(const

@@ -1,0 +1,22 @@
+--- origsrc/qtbase-opensource-src-5.6.2/src/network/socket/qnativesocketengine_unix.cpp	2016-09-16 00:49:42.000000000 -0500
++++ src/qtbase-opensource-src-5.6.2/src/network/socket/qnativesocketengine_unix.cpp	2016-10-28 15:42:52.471802000 -0500
+@@ -208,7 +208,9 @@ static void convertToLevelAndOption(QNat
+     case QNativeSocketEngine::ReceivePacketInformation:
+         if (socketProtocol == QAbstractSocket::IPv6Protocol || socketProtocol == QAbstractSocket::AnyIPProtocol) {
+             level = IPPROTO_IPV6;
++#ifdef IPV6_RECVPKTINFO
+             n = IPV6_RECVPKTINFO;
++#endif
+         } else if (socketProtocol == QAbstractSocket::IPv4Protocol) {
+             level = IPPROTO_IP;
+ #ifdef IP_PKTINFO
+@@ -223,7 +225,9 @@ static void convertToLevelAndOption(QNat
+     case QNativeSocketEngine::ReceiveHopLimit:
+         if (socketProtocol == QAbstractSocket::IPv6Protocol || socketProtocol == QAbstractSocket::AnyIPProtocol) {
+             level = IPPROTO_IPV6;
++#ifdef IPV6_RECVHOPLIMIT
+             n = IPV6_RECVHOPLIMIT;
++#endif
+         } else if (socketProtocol == QAbstractSocket::IPv4Protocol) {
+ #ifdef IP_RECVTTL               // IP_RECVTTL is a non-standard extension supported on some OS
+             level = IPPROTO_IP;
