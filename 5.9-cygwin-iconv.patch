@@ -1,0 +1,22 @@
+The gnu-libiconv test is solely for platforms where the inbuf parameter to
+iconv(3) is const char **; we have GNU libiconv but use the POSIX char **.
+
+Note that QIconvCodec should not be used when ICU is enabled.
+
+--- origsrc/qtbase-opensource-src-5.9.2/config.tests/iconv/iconv.pro	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/config.tests/iconv/iconv.pro	2017-10-21 23:58:16.918415900 -0500
+@@ -1,2 +1,2 @@
+ SOURCES = iconv.cpp
+-mac|mingw|openbsd|qnx|haiku:LIBS += -liconv
++mac|mingw|openbsd|qnx|haiku|cygwin-*:LIBS += -liconv
+--- origsrc/qtbase-opensource-src-5.9.2/src/corelib/codecs/qiconvcodec.cpp	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/corelib/codecs/qiconvcodec.cpp	2017-10-21 23:58:51.267978600 -0500
+@@ -433,7 +433,7 @@ iconv_t QIconvCodec::createIconv_t(const
+         init();
+ 
+     iconv_t cd = (iconv_t) -1;
+-#if defined(__GLIBC__) || !QT_CONFIG(posix_libiconv) || defined(Q_OS_QNX)
++#if defined(__GLIBC__) || !QT_CONFIG(posix_libiconv) || defined(Q_OS_QNX) || defined(Q_OS_CYGWIN)
+ #if defined(Q_OS_QNX)
+     // on QNX the default locale is UTF-8, and an empty string will cause iconv_open to fail
+     static const char empty_codeset[] = "UTF-8";

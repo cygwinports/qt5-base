@@ -1,0 +1,68 @@
+--- origsrc/qtbase-opensource-src-5.9.2/mkspecs/features/qt_app.prf	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/mkspecs/features/qt_app.prf	2017-10-22 00:33:43.982767600 -0500
+@@ -29,6 +29,7 @@ host_build:force_bootstrap {
+     contains(QT, core(-private)?|xml) {
+         QT -= core core-private xml
+         QT += bootstrap-private
++        LIBS_PRIVATE += -lz
+     }
+     target.path = $$[QT_HOST_BINS]
+ } else {
+--- origsrc/qtbase-opensource-src-5.9.2/src/gui/kernel/qwindowsysteminterface.cpp	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/gui/kernel/qwindowsysteminterface.cpp	2017-10-22 22:40:44.326222800 -0500
+@@ -739,6 +739,7 @@ void QWindowSystemInterface::handleFileO
+     QGuiApplicationPrivate::processWindowSystemEvent(&e);
+ }
+ 
++Q_GUI_EXPORT
+ void QWindowSystemInterfacePrivate::TabletEvent::setPlatformSynthesizesMouse(bool v)
+ {
+     platformSynthesizesMouse = v;
+--- origsrc/qtbase-opensource-src-5.9.2/src/platformsupport/eventdispatchers/eventdispatchers.pro	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/platformsupport/eventdispatchers/eventdispatchers.pro	2017-10-22 22:35:52.012334800 -0500
+@@ -26,7 +26,7 @@ unix {
+ qtConfig(glib) {
+     SOURCES += qeventdispatcher_glib.cpp
+     HEADERS += qeventdispatcher_glib_p.h
+-    QMAKE_USE_PRIVATE += glib
++    QMAKE_USE += glib
+ }
+ 
+ load(qt_module)
+--- origsrc/qtbase-opensource-src-5.9.2/src/platformsupport/fontdatabases/fontconfig/fontconfig.pri	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/platformsupport/fontdatabases/fontconfig/fontconfig.pri	2017-10-22 22:33:26.293268500 -0500
+@@ -3,4 +3,4 @@ HEADERS += $$PWD/qfontconfigdatabase_p.h
+ SOURCES += $$PWD/qfontconfigdatabase.cpp \
+            $$PWD/qfontenginemultifontconfig.cpp
+ 
+-QMAKE_USE_PRIVATE += fontconfig
++QMAKE_USE += fontconfig
+--- origsrc/qtbase-opensource-src-5.9.2/src/platformsupport/fontdatabases/freetype/freetype.pri	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/platformsupport/fontdatabases/freetype/freetype.pri	2017-10-22 22:33:04.808685900 -0500
+@@ -6,4 +6,4 @@ SOURCES += \
+         $$PWD/qfreetypefontdatabase.cpp \
+         $$PWD/qfontengine_ft.cpp
+ 
+-QMAKE_USE_PRIVATE += freetype
++QMAKE_USE += freetype
+--- origsrc/qtbase-opensource-src-5.9.2/src/platformsupport/themes/themes.pro	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/platformsupport/themes/themes.pro	2017-10-22 02:46:22.965761500 -0500
+@@ -1,7 +1,7 @@
+ TARGET = QtThemeSupport
+ MODULE = theme_support
+ 
+-QT = core-private gui-private
++QT = core-private gui-private dbus-private
+ CONFIG += static internal_module
+ 
+ DEFINES += QT_NO_CAST_FROM_ASCII
+--- origsrc/qtbase-opensource-src-5.9.2/src/plugins/platforms/offscreen/offscreen.pro	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/plugins/platforms/offscreen/offscreen.pro	2017-10-22 22:31:08.941256300 -0500
+@@ -21,6 +21,7 @@ qtConfig(xlib):qtConfig(opengl):!qtConfi
+     SOURCES += qoffscreenintegration_x11.cpp
+     HEADERS += qoffscreenintegration_x11.h
+     QT += glx_support-private
++    LIBS_PRIVATE += -lX11
+     system(echo "Using X11 offscreen integration with GLX")
+ } else {
+     SOURCES += qoffscreenintegration_dummy.cpp

@@ -1,5 +1,5 @@
 NAME="qt5-base"
-VERSION=5.6.2
+VERSION=5.9.2
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
@@ -14,31 +14,30 @@ SRC_DIR="qtbase-opensource-src-${VERSION}"
 #	fedora/qt5-poll.patch
 PATCH_URI="
 	fedora/qtbase-opensource-src-5.3.2-QTBUG-35459.patch
-	fedora/moc-get-the-system-defines-from-the-compiler-itself.patch
-	5.5.1-cygwin-dlopen.patch
-	5.6.2-cygwin-mkspecs.patch
-	5.6.2-cygwin-qmake.patch
-	5.5.1-cygwin-unix.patch
-	5.5.1-gtkstyle.patch
+	fedora/qtbase-opensource-src-5.8.0-QT_VERSION_CHECK.patch
+	fedora/qtbase-hidpi_scale_at_192.patch
+	fedora/qt5-qtbase-cxxflag.patch
 	5.5.1-makedepend.patch
-	5.6.2-no-undefined.patch
-	5.5.1-cygwin-iconv.patch
 	5.5.1-cygwin-cmake.patch
+	5.9-cygwin-dlopen.patch
+	5.9-cygwin-iconv.patch
+	5.9-cygwin-mkspecs.patch
+	5.9-cygwin-qmake.patch
+	5.9-cygwin-unix.patch
 	5.5.1-cygwin-dllexport.patch
-	5.5.1-platformsupport.patch
 	5.6.2-cygwin-forkfd.patch
 	5.6.2-cygwin-network.patch
+	5.9-ftm.patch
+	5.9-no-undefined.patch
+	5.9-platformsupport.patch
 "
 
-CFLAGS+=" -fno-keep-inline-dllexport"
-CXXFLAGS+=" -fno-keep-inline-dllexport -D_GNU_SOURCE"
+CFLAGS+=" -Wno-deprecated-declarations -fno-delete-null-pointer-checks"
+CXXFLAGS+=" -Wno-deprecated-declarations -fno-delete-null-pointer-checks"
 
 src_compile() {
 	cd ${B}
 
-	# -no-iconv: if -icu is used, iconv is not (see src/corelib/codecs/)
-	# -no-gtkstyle: causes segfaults in QGtk2Painter::paintShadow
-	# -no-largefile: Cygwin's open() and friends are 64-bit w/o O_LARGEFILE
 	${S}/configure \
 		-prefix /usr \
 		-bindir /usr/lib/qt5/bin \
@@ -57,9 +56,10 @@ src_compile() {
 		-testsdir /usr/lib/qt5/tests \
 		-platform cygwin-g++ \
 		-confirm-license -opensource \
-		-release -c++11 -shared -optimized-qmake \
+		-release -shared -optimized-qmake \
+		-no-strip -no-separate-debug-info \
 		-no-rpath -no-reduce-exports -no-reduce-relocations \
-		-no-largefile -no-pch \
+		-no-pch \
 		-accessibility \
 		-plugin-sql-mysql \
 		-plugin-sql-odbc \
@@ -70,13 +70,24 @@ src_compile() {
 		-system-zlib -system-libpng -system-libjpeg -dbus-linked \
 		-openssl-linked -system-pcre -system-harfbuzz \
 		-system-xcb -system-xkbcommon \
-		-gui -widgets -no-cups -icu -iconv \
-		-xcb -no-egl -no-eglfs -opengl desktop -glib -gtkstyle \
+		-gui -widgets -no-cups -icu ${ARCH_i686+-no-sse2} \
+		-xcb -no-egl -no-eglfs -opengl desktop -glib \
+		QMAKE_CFLAGS_RELEASE="${CFLAGS}" \
+		QMAKE_CXXFLAGS_RELEASE="${CXXFLAGS}" \
+		QMAKE_STRIP= \
 		|| error "configure failed"
+
+#	cygmake clean -C qmake
+#	cygmake -C qmake \
+#		QMAKE_CFLAGS_RELEASE="${CFLAGS}" \
+#		QMAKE_CXXFLAGS_RELEASE="${CXXFLAGS}" \
+#		QMAKE_STRIP=
 
 	PATH="${B}/bin:${B}/lib:$PATH" \
 	cygmake
+	if ! defined BOOTSTRAP; then
 	cygmake docs
+	fi
 }
 
 src_install() {
@@ -194,20 +205,18 @@ libQt5Gui_devel_CONTENTS="
 	usr/include/qt5/QtOpenGL/
 	usr/include/qt5/QtOpenGLExtensions/
 	usr/include/qt5/QtPlatformHeaders/
-	usr/include/qt5/QtPlatformSupport/
-	usr/include/qt5/QtPrintSupport/
 	usr/include/qt5/QtWidgets/
+	usr/include/qt5/Qt*Support/
 	usr/lib/cmake/Qt5Gui/
 	usr/lib/cmake/Qt5OpenGL/
 	usr/lib/cmake/Qt5OpenGLExtensions/
-	usr/lib/cmake/Qt5PrintSupport/
 	usr/lib/cmake/Qt5Widgets/
+	usr/lib/cmake/Qt5*Support/
 	usr/lib/libQt5Gui.*
 	usr/lib/libQt5OpenGL.*
 	usr/lib/libQt5OpenGLExtensions.*
-	usr/lib/libQt5PlatformSupport.*
-	usr/lib/libQt5PrintSupport.*
 	usr/lib/libQt5Widgets.*
+	usr/lib/libQt5*Support.*
 	usr/lib/libQt5XcbQpa.*
 	usr/lib/pkgconfig/Qt5Gui.pc
 	usr/lib/pkgconfig/Qt5OpenGL.pc
@@ -225,9 +234,14 @@ libQt5Sql_devel_CONTENTS="
 	usr/lib/libQt5Sql.*
 	usr/lib/pkgconfig/Qt5Sql.pc
 "
+if ! defined BOOTSTRAP; then
 qt5_base_doc_CATEGORY="Doc"
 qt5_base_doc_CONTENTS="usr/share/qt5/doc/q*"
+fi
 qt5_base_examples_CATEGORY="X11"
 qt5_base_examples_CONTENTS="usr/lib/qt5/examples/"
 
 DIFF_EXCLUDES="3rdparty QtConfig qconfig.h qfeatures.h"
+
+# This is only used if already in a GTK+ environment
+REQUIRES_EXCLUDE_FROM="usr/lib/qt5/plugins/platformthemes/cygqgtk3.dll"

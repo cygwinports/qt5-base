@@ -20,3 +20,13 @@
          } else if (socketProtocol == QAbstractSocket::IPv4Protocol) {
  #ifdef IP_RECVTTL               // IP_RECVTTL is a non-standard extension supported on some OS
              level = IPPROTO_IP;
+@@ -946,6 +946,9 @@ qint64 QNativeSocketEnginePrivate::nativ
+         Q_ASSERT(header);
+         qt_socket_getPortAndAddress(&aa, &header->senderPort, &header->senderAddress);
+         header->destinationPort = localPort;
++#ifndef MSG_EOR
++#define MSG_EOR 0
++#endif
+         header->endOfRecord = (msg.msg_flags & MSG_EOR) != 0;
+ 
+         // parse the ancillary data

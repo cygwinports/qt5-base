@@ -1,0 +1,22 @@
+--- origsrc/qtbase-opensource-src-5.9.2/src/corelib/global/qglobal.cpp	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/corelib/global/qglobal.cpp	2017-10-21 23:30:40.490357300 -0500
+@@ -2036,7 +2036,7 @@ static const char *osVer_helper(QOperati
+ }
+ #endif
+ 
+-#elif defined(Q_OS_WIN) || defined(Q_OS_CYGWIN) || defined(Q_OS_WINRT)
++#elif defined(Q_OS_WIN) || defined(Q_OS_WINRT)
+ 
+ QT_BEGIN_INCLUDE_NAMESPACE
+ #include "qt_windows.h"
+--- origsrc/qtbase-opensource-src-5.9.2/src/corelib/global/qsysinfo.h	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/corelib/global/qsysinfo.h	2017-10-21 23:31:55.846450400 -0500
+@@ -212,7 +212,7 @@ public:
+ 
+ QT_WARNING_PUSH
+ QT_WARNING_DISABLE_DEPRECATED
+-#if defined(Q_OS_WIN) || defined(Q_OS_CYGWIN)
++#if defined(Q_OS_WIN)
+     QT_SYSINFO_DEPRECATED_X("Use QOperatingSystemVersion::current()") static const WinVersion WindowsVersion;
+     QT_SYSINFO_DEPRECATED_X("Use QOperatingSystemVersion::current()") static WinVersion windowsVersion();
+ #else

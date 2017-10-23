@@ -1,6 +1,6 @@
---- origsrc/qtbase-opensource-src-5.5.1/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2015-10-12 23:35:27.000000000 -0500
-+++ src/qtbase-opensource-src-5.5.1/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2015-10-18 17:23:13.272412500 -0500
-@@ -48,13 +48,16 @@ static inline QByteArray detectDesktopEn
+--- origsrc/qtbase-opensource-src-5.9.2/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/platformsupport/services/genericunix/qgenericunixservices.cpp	2017-10-22 00:07:55.962699100 -0500
+@@ -61,13 +61,16 @@ static inline QByteArray detectDesktopEn
  {
      const QByteArray xdgCurrentDesktop = qgetenv("XDG_CURRENT_DESKTOP");
      if (!xdgCurrentDesktop.isEmpty())
@@ -17,9 +17,9 @@
 +        return QByteArrayLiteral("MATE");
  
      // Fallback to checking $DESKTOP_SESSION (unreliable)
-     const QByteArray desktopSession = qgetenv("DESKTOP_SESSION");
-@@ -96,8 +99,13 @@ static inline bool detectWebBrowser(cons
-             browser->append(QStringLiteral(" exec"));
+     QByteArray desktopSession = qgetenv("DESKTOP_SESSION");
+@@ -127,8 +130,13 @@ static inline bool detectWebBrowser(cons
+             browser->append(QLatin1String(" exec"));
              return true;
          }
 -    } else if (desktop == QByteArray("GNOME")) {
@@ -34,9 +34,9 @@
              return true;
      }
  
---- origsrc/qtbase-opensource-src-5.5.1/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2015-10-12 23:35:27.000000000 -0500
-+++ src/qtbase-opensource-src-5.5.1/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2015-10-18 17:23:13.276412700 -0500
-@@ -177,6 +177,8 @@ QPlatformSystemTrayIcon *QGenericUnixThe
+--- origsrc/qtbase-opensource-src-5.9.2/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2017-10-02 03:43:38.000000000 -0500
++++ src/qtbase-opensource-src-5.9.2/src/platformsupport/themes/genericunix/qgenericunixthemes.cpp	2017-10-22 00:07:55.962699100 -0500
+@@ -212,6 +212,8 @@ QPlatformSystemTrayIcon *QGenericUnixThe
  QVariant QGenericUnixTheme::themeHint(ThemeHint hint) const
  {
      switch (hint) {
@@ -45,7 +45,7 @@
      case QPlatformTheme::SystemIconFallbackThemeName:
          return QVariant(QString(QStringLiteral("hicolor")));
      case QPlatformTheme::IconThemeSearchPaths:
-@@ -694,6 +696,7 @@ QStringList QGenericUnixTheme::themeName
+@@ -848,6 +850,7 @@ QStringList QGenericUnixTheme::themeName
          QList<QByteArray> gtkBasedEnvironments;
          gtkBasedEnvironments << "GNOME"
                               << "X-CINNAMON"
@@ -53,12 +53,12 @@
                               << "UNITY"
                               << "MATE"
                               << "XFCE"
-@@ -705,6 +708,8 @@ QStringList QGenericUnixTheme::themeName
+@@ -859,6 +862,8 @@ QStringList QGenericUnixTheme::themeName
                  result.push_back(QLatin1String(QKdeTheme::name));
  #endif
              } else if (gtkBasedEnvironments.contains(desktopName)) {
 +                if (desktopEnvironment == "GNOME")
 +                    result.push_back(QStringLiteral("qgnomeplatform"));
-                 // prefer the GTK2 theme implementation with native dialogs etc.
-                 result.push_back(QStringLiteral("gtk2"));
-                 // fallback to the generic Gnome theme if loading the GTK2 theme fails
+                 // prefer the GTK3 theme implementation with native dialogs etc.
+                 result.push_back(QStringLiteral("gtk3"));
+                 // fallback to the generic Gnome theme if loading the GTK3 theme fails
