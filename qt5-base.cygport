@@ -1,5 +1,5 @@
 NAME="qt5-base"
-VERSION=5.9.2
+VERSION=5.9.3
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
@@ -17,6 +17,7 @@ PATCH_URI="
 	fedora/qtbase-opensource-src-5.8.0-QT_VERSION_CHECK.patch
 	fedora/qtbase-hidpi_scale_at_192.patch
 	fedora/qt5-qtbase-cxxflag.patch
+	fedora/qtbase-opensource-src-5.9.3-QTBUG-64742-out-of-bounds-in-qdnslookup_unix.patch
 	5.5.1-makedepend.patch
 	5.5.1-cygwin-cmake.patch
 	5.9-cygwin-dlopen.patch
@@ -77,11 +78,11 @@ src_compile() {
 		QMAKE_STRIP= \
 		|| error "configure failed"
 
-#	cygmake clean -C qmake
-#	cygmake -C qmake \
-#		QMAKE_CFLAGS_RELEASE="${CFLAGS}" \
-#		QMAKE_CXXFLAGS_RELEASE="${CXXFLAGS}" \
-#		QMAKE_STRIP=
+	cygmake clean -C qmake
+	cygmake -C qmake \
+		QMAKE_CFLAGS_RELEASE="${CFLAGS}" \
+		QMAKE_CXXFLAGS_RELEASE="${CXXFLAGS}" \
+		QMAKE_STRIP=
 
 	PATH="${B}/bin:${B}/lib:$PATH" \
 	cygmake
