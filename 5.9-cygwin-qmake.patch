@@ -61,6 +61,15 @@
                      uninst.append("-$(DEL_FILE) " + dst_link);
 --- origsrc/qtbase-opensource-src-5.9.2/qmake/generators/unix/unixmake2.cpp	2017-10-02 03:43:38.000000000 -0500
 +++ src/qtbase-opensource-src-5.9.2/qmake/generators/unix/unixmake2.cpp	2017-10-21 23:28:06.521898400 -0500
+@@ -180,7 +180,7 @@ UnixMakefileGenerator::writeMakeParts(QT
+         const ProStringList &incs = project->values("INCLUDEPATH");
+         for(int i = 0; i < incs.size(); ++i) {
+             const ProString &inc = incs.at(i);
+-            if (inc.isEmpty())
++            if (inc.isEmpty() || inc == "/usr/include")
+                 continue;
+ 
+             if (!isystem.isEmpty() && isSystemInclude(inc.toQString()))
 @@ -603,6 +603,14 @@ UnixMakefileGenerator::writeMakeParts(QT
              if(!project->isEmpty("QMAKE_POST_LINK"))
                  t << "\n\t" << var("QMAKE_POST_LINK");

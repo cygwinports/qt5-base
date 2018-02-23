@@ -1,6 +1,6 @@
 NAME="qt5-base"
-VERSION=5.9.3
-RELEASE=2
+VERSION=5.9.4
+RELEASE=1
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
 DESCRIPTION="Qt is a cross-platform application framework for desktop and
@@ -16,8 +16,17 @@ PATCH_URI="
 	fedora/qtbase-opensource-src-5.3.2-QTBUG-35459.patch
 	fedora/qtbase-opensource-src-5.8.0-QT_VERSION_CHECK.patch
 	fedora/qtbase-hidpi_scale_at_192.patch
+	fedora/qtbase-opensource-src-5.7.1-moc_macros.patch
+	fedora/qtbase-fdo101667.patch
 	fedora/qt5-qtbase-cxxflag.patch
-	fedora/qtbase-opensource-src-5.9.3-QTBUG-64742-out-of-bounds-in-qdnslookup_unix.patch
+	https://bugreports.qt.io/secure/attachment/66353/xcberror_filter.patch
+	fedora/0012-Avoid-providing-bad-pixelDeltas-on-X11.patch
+	fedora/0016-CMake-qt5_add_binary_resource-re-run-if-needed.patch
+	fedora/0045-Handle-OOM-condition-in-the-validation-of-plugin-met.patch
+	fedora/0050-glx-Avoid-losing-the-stereo-flag-in-QSurfaceFormat.patch
+	fedora/0068-QHeaderView-properly-restore-section-data-after-layo.patch
+	fedora/0069-QSimpleDrag-Fix-mouse-release-coords-for-delayed-eve.patch
+	fedora/0070-Fix-native-QFileDialog-initial-selection-for-remote-.patch
 	5.5.1-makedepend.patch
 	5.5.1-cygwin-cmake.patch
 	5.9-cygwin-dlopen.patch
