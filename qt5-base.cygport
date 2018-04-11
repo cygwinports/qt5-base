@@ -1,6 +1,6 @@
 NAME="qt5-base"
 VERSION=5.9.4
-RELEASE=1
+RELEASE=2
 CATEGORY="Libs"
 SUMMARY="Qt C++ application framework (core libraries)"
 DESCRIPTION="Qt is a cross-platform application framework for desktop and
@@ -27,6 +27,7 @@ PATCH_URI="
 	fedora/0068-QHeaderView-properly-restore-section-data-after-layo.patch
 	fedora/0069-QSimpleDrag-Fix-mouse-release-coords-for-delayed-eve.patch
 	fedora/0070-Fix-native-QFileDialog-initial-selection-for-remote-.patch
+	fedora/0111-opengl-Bail-if-cached-shader-fails-to-load.patch
 	5.5.1-makedepend.patch
 	5.5.1-cygwin-cmake.patch
 	5.9-cygwin-dlopen.patch
